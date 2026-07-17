@@ -13,15 +13,16 @@ Post these after `Teachy.dmg` is on GitHub Releases and you’ve filmed the 60s 
 ```
 Teachy is a free, MIT-licensed macOS teaching companion. It lives in the menu bar, sees your screen, points at real UI, and coaches you until something actually runs — like Khan Academy, but act-first on your computer.
 
-Born from Farza’s Clicky experiments. This fork/line is courses-first: First Win with AI, Use AI to Code, GitHub tracks, open curriculum JSON.
+Two products: free Teachy for anyone, and Teachy Enterprise (bespoke AI + employee AI fluency for companies).
 
 Download (community build — right-click → Open on first launch):
 https://github.com/VedSoni-dev/teachy/releases/latest
 
 Site: https://vedsoni-dev.github.io/teachy/
+Enterprise: https://vedsoni-dev.github.io/teachy/enterprise.html
 Source: https://github.com/VedSoni-dev/teachy
 
-You need a local Teachy proxy + an OpenRouter key (keys never ship in the app). Feedback on the first 10 minutes of “First Win” is especially welcome.
+You need a local Teachy proxy + an OpenRouter key (keys never ship in the app). Feedback on “AI Fluency Basics” is especially welcome.
 ```
 
 Submit: https://news.ycombinator.com/submit
@@ -43,22 +44,39 @@ https://github.com/VedSoni-dev/teachy/releases/latest
 Site:
 https://vedsoni-dev.github.io/teachy/
 
-3/ Start with “First Win with AI” (≈10 min) → then “Use AI to Code.”
+3/ For companies: Teachy Enterprise — bespoke AI + teaching so every employee becomes AI fluent.
+https://vedsoni-dev.github.io/teachy/enterprise.html
 
-Star the repo if you want free Mac teaching for everyone:
+4/ Start with AI Fluency Basics — prompt, result, critique, teach-back.
+
+Star the repo:
 https://github.com/VedSoni-dev/teachy
-
-(Built on the spirit of Farza’s Clicky — courses-first, MIT.)
 ```
 
 Attach the 60s demo video/GIF on tweet 1.
 
 ---
 
+## Enterprise cold note (email / LinkedIn)
+
+```
+Subject: AI seats vs AI fluency
+
+Most teams buy ChatGPT/Copilot and ship a webinar. Usage stays shallow.
+
+Teachy Enterprise is bespoke AI + a 1:1 tutor on the real screen — employees practice your tools and we verify the skill (not “module completed”).
+
+Would a 4-week pilot with one team be useful?
+https://vedsoni-dev.github.io/teachy/enterprise.html
+```
+
+---
+
 ## Short Discord / Slack / friends ping
 
 ```
-Hey — I shipped Teachy (free OSS). It’s a Mac tutor that coaches you on your real screen. Would love 10 min: install → First Win path → tell me where you got stuck.
+Hey — I shipped Teachy (free OSS). It’s a Mac tutor that coaches you on your real screen. Would love 10 min: install → AI Fluency Basics → tell me where you got stuck.
 
 https://github.com/VedSoni-dev/teachy/releases/latest
+https://vedsoni-dev.github.io/teachy/
 ```
