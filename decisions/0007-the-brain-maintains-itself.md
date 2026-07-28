@@ -85,8 +85,23 @@ records intent, never outcome - it can be perfectly maintained and perfectly wro
   too quiet, and it needs to move somewhere with attention.
 - A second person or a Mac joins the work, at which point local-only enforcement
   stops being sufficient and this needs CI.
-- Telemetry exists, at which point decision records should carry an outcome and the
-  health check should flag beliefs that reality has contradicted.
+- ~~Telemetry exists, at which point decision records should carry an outcome and
+  the health check should flag beliefs that reality has contradicted.~~
+  **Met 2026-07-28**, caught by the first dream cycle. Records now carry an
+  `Outcome` section, the template requires one, and `brain-status.ps1` flags
+  ungraded records once there is evidence to grade them with.
+
+## Outcome
+
+Partially graded. The automation itself works and is proven by use: the graph has
+rebuilt on every commit since, `brain-status.ps1` caught five of the original
+records missing their cost section, and the pre-push warning caught its own
+false-positive problem within an hour.
+
+The gap this record named as its weakest link - capture depending on convention -
+is now partly addressed by [dreaming](../DREAMING.md), which does not rely on
+anyone remembering at the moment of the decision, only on someone running a
+cycle later. Whether that is enough is still unmeasured.
 
 ## See also
 

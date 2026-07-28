@@ -49,6 +49,7 @@ Nobody maintains this by hand:
 | `scripts/graph-status.ps1` | is the graph built from the current HEADs? |
 | `scripts/new-decision.ps1` | scaffolds a record with the right shape and number |
 | `scripts/telemetry-report.ps1` | grades decisions 0001/0002/0004 against what actually happened |
+| `scripts/dream.ps1` | gathers a reflective briefing — see [DREAMING.md](DREAMING.md) |
 
 Agents are told to write back in every repo's `CLAUDE.md`. The protocol —
 including when *not* to record — is [WRITE-BACK.md](WRITE-BACK.md).

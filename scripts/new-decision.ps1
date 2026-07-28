@@ -83,6 +83,16 @@ so they stop trusting all of them.>
 <The observation that should make someone reopen this. A threshold, a signal, a
 date - something checkable, not "if it becomes a problem".>
 
+## Outcome
+
+Not yet measured.
+
+<Fill this in once there is evidence. What actually happened, and whether the
+reasoning above held up. A record that only ever states what we believed is a
+record that can be perfectly maintained and perfectly wrong. If the decision
+turned out badly, say so here rather than quietly writing a new record that
+contradicts it.>
+
 ## See also
 
 <Links to related records, the code this constrains, or the incident that caused it.>

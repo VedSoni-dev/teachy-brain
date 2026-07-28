@@ -54,3 +54,9 @@ product, it is a product nobody finishes installing.
 
 - [0002 — Guided key setup](0002-guided-key-setup.md)
 - `teachy-app/worker/` — the proxy that exists but is not the default path
+
+## Outcome
+
+Not yet measured. The instrumentation exists ([0008](0008-telemetry-is-local-first.md));
+what is missing is usage. Run `telemetry-report.ps1` once real people have run
+Teachy, and replace this section with what actually happened.

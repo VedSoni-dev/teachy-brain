@@ -58,3 +58,20 @@ when the session ends. That is the single way this system fails.
 
 Full protocol, including when NOT to record: `WRITE-BACK.md`.
 Check yourself with `pwsh scripts/brain-status.ps1`.
+
+## Dreaming - run one after substantial work
+
+`pwsh scripts/dream.ps1` gathers a briefing (commits since the last dream, every
+"revisit when" condition, document ages, telemetry, health) into
+`../graph/dream-input.md`. Read it, answer its six questions, act, then stamp:
+
+```powershell
+(Get-Date).ToString("o") | Set-Content ../graph/.last-dream
+```
+
+Checks catch structural rot. Dreaming catches semantic rot - a record whose
+reasoning quietly stopped applying, or a revisit condition that came true weeks
+ago and nobody noticed. Full protocol: DREAMING.md.
+
+This is Claude's job, not Ved's. He has said explicitly he never wants to
+maintain the brain. Do it as part of finishing work; do not offer it as an option.

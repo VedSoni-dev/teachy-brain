@@ -67,6 +67,34 @@ foreach ($decisionFile in $decisionFiles) {
 }
 $notes += "$($decisionFiles.Count) decision records"
 
+# -- 2b. Claims the evidence could settle but nobody has ------------------------
+#
+# Added because 0007's own revisit condition fired: "telemetry exists, at which
+# point decision records should carry an outcome". A record that states a belief
+# forever, while the data that would confirm or kill it sits unread in a log
+# file, is the failure 0008 exists to prevent.
+
+$teachyHome = if ($env:TEACHY_HOME) { $env:TEACHY_HOME } else { Join-Path $env:USERPROFILE '.teachy' }
+$eventLogPath = Join-Path $teachyHome 'events.jsonl'
+$hasEvidence = (Test-Path $eventLogPath) -and ((Get-Item $eventLogPath).Length -gt 0)
+
+if ($hasEvidence) {
+    $ungraded = @()
+    foreach ($decisionFile in $decisionFiles) {
+        $content = Get-Content $decisionFile.FullName -Raw -Encoding UTF8
+        if ($content -match '(?im)^##\s+Outcome' -and $content -match '(?im)Not yet measured') {
+            $ungraded += $decisionFile.BaseName
+        }
+    }
+    if ($ungraded.Count -gt 0) {
+        $problems += "There is telemetry, but $($ungraded.Count) record(s) are still ungraded: $($ungraded -join ', '). Run telemetry-report.ps1 and fill in their Outcome."
+    } else {
+        $notes += 'telemetry exists and no record is left ungraded'
+    }
+} else {
+    $notes += 'no telemetry yet (nothing to grade against)'
+}
+
 # -- 3. Does the README still list every decision? -----------------------------
 
 $readmePath = Join-Path $brainRoot 'README.md'

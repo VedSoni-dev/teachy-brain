@@ -81,3 +81,9 @@ its signup or keys flow enough that the instructions mislead.
 
 - `teachy-app/desktop/src/onboarding/KeySetup.tsx`
 - `teachy-app/desktop/src/state/openRouterKey.ts`
+
+## Outcome
+
+Not yet measured. The instrumentation exists ([0008](0008-telemetry-is-local-first.md));
+what is missing is usage. Run `telemetry-report.ps1` once real people have run
+Teachy, and replace this section with what actually happened.
