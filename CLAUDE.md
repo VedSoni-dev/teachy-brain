@@ -75,3 +75,18 @@ ago and nobody noticed. Full protocol: DREAMING.md.
 
 This is Claude's job, not Ved's. He has said explicitly he never wants to
 maintain the brain. Do it as part of finishing work; do not offer it as an option.
+
+## Standing context
+
+Repeated here rather than left to memory files: those are keyed to the workspace
+root (C:\Users\vedan\teachy), so a session started inside this repo loads none of
+them. This block always loads.
+
+- **Ved never maintains the brain.** Keeping decisions, incidents and known
+  issues current is Claude's job, done as part of finishing work - not offered as
+  an option.
+- **He wants the call made, not a menu.** Decide, act, state the honest cost in a
+  sentence. Reserve questions for money, publication, and product direction.
+- **Never declare victory.** Name what is still missing. Verify by running things.
+- **The workspace** is three repos side by side: `teachy-app`, `teachy-web`,
+  `teachy-brain`, plus a generated `graph/`.
