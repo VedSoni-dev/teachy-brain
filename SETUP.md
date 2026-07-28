@@ -2,6 +2,43 @@
 
 Three repos, one workspace, one command.
 
+## Moving to a new machine that has the OLD combined repo on it
+
+Paste this. It clears local clones of the pre-split repo and replaces them with
+the three-repo workspace. It only touches **local disk** — nothing on GitHub.
+
+```
+Set up my Teachy workspace on this machine, replacing the old pre-split repo.
+
+1. Find every local clone of the OLD combined repo — a git repo whose origin is
+   github.com/VedSoni-dev/teachy (exactly that, NOT teachy-app / teachy-web /
+   teachy-brain / teachy-releases). Look under my home directory. Common spots:
+   ~/teachy, ~/clicky, ~/clicky-win, ~/Developer, ~/Documents, ~/code.
+
+2. For each one you find, before deleting anything: check for uncommitted
+   changes and for local branches that are not pushed to its origin. If there is
+   ANY unpushed work, stop and show me — do not delete it.
+
+3. Show me the full list of directories you plan to delete, with their sizes, and
+   wait for me to confirm. Then delete them.
+
+4. Clone the new workspace: gh repo clone VedSoni-dev/teachy-brain, then run
+   bash teachy-brain/scripts/bootstrap.sh — that creates a teachy/ folder with
+   all three repos, installs dependencies, runs the tests, and builds the
+   knowledge graph.
+
+5. Read teachy-brain/QUERYING.md and teachy-brain/CLAUDE.md, then tell me what
+   state the workspace is in and what teachy-brain/engineering/known-issues.md
+   says is worth doing next.
+
+Do NOT delete or modify anything on GitHub. The old VedSoni-dev/teachy repo must
+stay — installed copies of the Mac app still fetch appcast.xml from it for
+auto-updates, and that URL is compiled into binaries already shipped.
+```
+
+The confirmation step in 3 is deliberate: a `find`-based sweep for repos is
+exactly the kind of thing that matches something you forgot you cared about.
+
 ## The paste-into-an-agent prompt
 
 Open Claude Code (or any coding agent) in the folder where you want Teachy to

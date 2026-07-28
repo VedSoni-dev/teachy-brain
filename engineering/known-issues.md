@@ -69,6 +69,31 @@ step would fix it. See [0008](../decisions/0008-telemetry-is-local-first.md).
 no hook prints it, so the brain will hold an ungraded claim indefinitely while
 the answer sits in a log file nobody opened.
 
+### The old combined repo is still live infrastructure — P1
+
+`VedSoni-dev/teachy` was called an archive in [0005](../decisions/0005-three-repos.md).
+It is not. Five things still resolve against it:
+
+| Dependency | What breaks |
+|---|---|
+| `appcast.xml` (Sparkle auto-update) | Every installed Mac copy checks this URL — **and it is compiled into shipped v1.0/v1.1 binaries**, so it can never be changed for those installs |
+| `releases/latest` | The download button on 4+ pages of the live site |
+| `gh-pages` branch | Serves `vedsoni-dev.github.io/teachy` |
+| `registry.json` `installURL` | Course installs |
+| `ClickyAcademyCatalog.swift` | The Mac app's academy catalog fetch |
+
+It also holds `feature/learner-brain` — **3 commits that exist nowhere else**,
+because the split cloned single-branch from `main`.
+
+**Deleting that repo is not safe and never will be.** The appcast URL is baked
+into binaries already on people's machines. The end state is frozen-but-serving,
+not deleted.
+
+Cutover order, when someone does it: rescue `feature/learner-brain` into
+teachy-app; repoint `registry.json` and `ClickyAcademyCatalog.swift` at
+teachy-app; move Vercel and `gh-pages` to teachy-web; update the site's download
+links. After that it serves only `appcast.xml`.
+
 ### Cross-repo course URLs go stale silently — P2
 
 `teachy-web`'s `registry.json` installs courses from the app repo by raw URL. If
