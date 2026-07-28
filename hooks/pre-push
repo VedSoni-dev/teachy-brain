@@ -22,6 +22,22 @@ brain_status_script="$workspace_root/teachy-brain/scripts/brain-status.ps1"
 powershell_command=$(command -v pwsh || command -v powershell || true)
 [ -n "$powershell_command" ] || exit 0
 
+# Committing then immediately pushing is the normal rhythm, and the post-commit
+# rebuild is still running when the push starts. Reporting "stale" then is
+# technically true and useless: it fires on almost every push and teaches people
+# that the warning means nothing. Wait for the in-flight rebuild instead.
+lock_file="$workspace_root/graph/.rebuild.lock"
+if [ -f "$lock_file" ]; then
+    printf 'teachy: waiting for the knowledge graph rebuild'
+    waited=0
+    while [ -f "$lock_file" ] && [ "$waited" -lt 120 ]; do
+        sleep 3
+        waited=$((waited + 3))
+        printf '.'
+    done
+    printf '\n'
+fi
+
 if ! "$powershell_command" -NoProfile -ExecutionPolicy Bypass -File "$brain_status_script" 2>/dev/null; then
     echo ""
     echo "  ^ The brain is drifting. Pushing anyway - this is a warning, not a gate."
