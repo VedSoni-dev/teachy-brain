@@ -1,0 +1,8 @@
+# Git hooks and shell scripts must keep LF endings.
+#
+# On Windows, autocrlf rewrites them to CRLF on checkout, and Git for Windows'
+# sh then fails on the shebang with a "bad interpreter" error that names a
+# carriage return — an obscure failure for something that looks like a plain
+# text file. Forcing LF here means the hooks work on a fresh Windows clone.
+hooks/* text eol=lf
+*.sh text eol=lf

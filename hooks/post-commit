@@ -1,0 +1,53 @@
+#!/bin/sh
+#
+# Rebuilds the Teachy company knowledge graph after every commit.
+#
+# Shared by all three repos via core.hooksPath (see scripts/install-hooks.ps1),
+# so it lives in git and is reviewed like anything else, rather than rotting
+# untracked inside each .git/hooks.
+#
+# It runs DETACHED. A full rebuild takes about a minute, and a commit that
+# blocks for a minute is a commit people stop making — they reach for
+# --no-verify, and then the automation is worse than nothing because it also
+# looks like it is working.
+#
+# If the detached spawn fails for any reason, the graph simply stays stale and
+# scripts/graph-status.ps1 says so. Degraded, but never silently wrong.
+
+set -e
+
+repo_root=$(git rev-parse --show-toplevel)
+workspace_root=$(cd "$repo_root/.." && pwd)
+rebuild_script="$workspace_root/teachy-brain/scripts/rebuild-graph.ps1"
+
+[ -f "$rebuild_script" ] || exit 0
+command -v graphify >/dev/null 2>&1 || exit 0
+
+# A rebuild already in flight would race this one over the same output files.
+lock_file="$workspace_root/graph/.rebuild.lock"
+mkdir -p "$workspace_root/graph"
+
+if [ -f "$lock_file" ]; then
+    # Stale locks happen — a killed rebuild never cleans up. Anything older than
+    # 10 minutes is not a live rebuild of a job that takes about a minute.
+    if [ -n "$(find "$lock_file" -mmin +10 2>/dev/null)" ]; then
+        rm -f "$lock_file"
+    else
+        exit 0
+    fi
+fi
+
+powershell_command=$(command -v pwsh || command -v powershell || true)
+[ -n "$powershell_command" ] || exit 0
+
+log_file="$workspace_root/graph/.rebuild.log"
+
+(
+    echo "$$" > "$lock_file"
+    trap 'rm -f "$lock_file"' EXIT
+    "$powershell_command" -NoProfile -ExecutionPolicy Bypass -File "$rebuild_script" \
+        > "$log_file" 2>&1
+) </dev/null >/dev/null 2>&1 &
+
+echo "teachy: knowledge graph rebuilding in the background (graph/.rebuild.log)"
+exit 0

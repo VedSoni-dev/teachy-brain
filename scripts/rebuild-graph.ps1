@@ -56,6 +56,28 @@ New-Item -ItemType Directory -Force $mergedGraphDirectory | Out-Null
 Write-Host "merging $($graphPaths.Count) graphs..." -ForegroundColor Cyan
 graphify merge-graphs @graphPaths --out $mergedGraphPath | Select-Object -Last 1
 
+# Stamp which commit of each repo this graph was built from.
+#
+# Without this, "is the graph current?" can only be guessed from file timestamps,
+# which lie in both directions — a rebuild that changed nothing looks fresh, and
+# a clone with fresh mtimes looks current when it was never built at all.
+# Recording the HEAD SHAs makes staleness a fact rather than an inference, and it
+# is what scripts/graph-status.ps1 checks.
+$builtFrom = [ordered]@{}
+foreach ($repoName in $repoNames) {
+    $repoPath = Join-Path $workspaceRoot $repoName
+    if (Test-Path $repoPath) {
+        $headSha = (git -C $repoPath rev-parse HEAD 2>$null)
+        if ($LASTEXITCODE -eq 0) { $builtFrom[$repoName] = $headSha.Trim() }
+    }
+}
+
+$metadataPath = Join-Path $mergedGraphDirectory 'teachy-graph.meta.json'
+[ordered]@{
+    builtAtUtc = (Get-Date).ToUniversalTime().ToString('o')
+    builtFrom  = $builtFrom
+} | ConvertTo-Json -Depth 5 | Set-Content -Path $metadataPath -Encoding utf8
+
 Write-Host ""
 Write-Host "Company graph: $mergedGraphPath" -ForegroundColor Green
 Write-Host 'Ask it something:' -ForegroundColor Green
