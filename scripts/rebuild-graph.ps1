@@ -18,7 +18,9 @@
 $ErrorActionPreference = 'Stop'
 
 # The workspace root is the parent of teachy-brain — where all three repos live.
-$workspaceRoot = (Resolve-Path (Join-Path $PSScriptRoot '..' '..')).Path
+# Nested Join-Path rather than the multi-argument form: Windows PowerShell 5.1
+# only accepts -Path and -ChildPath, and this has to run on a stock Windows box.
+$workspaceRoot = (Resolve-Path (Join-Path (Join-Path $PSScriptRoot '..') '..')).Path
 $repoNames = @('teachy-app', 'teachy-web', 'teachy-brain')
 $mergedGraphDirectory = Join-Path $workspaceRoot 'graph'
 $mergedGraphPath = Join-Path $mergedGraphDirectory 'teachy-graph.json'
