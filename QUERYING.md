@@ -7,6 +7,20 @@ answered without a person who remembers.
 **The graph is a view. The markdown is the truth.** Never edit the graph; if it
 is wrong, rebuild it.
 
+## Which tool answers which question
+
+| Question | Tool |
+|----------|------|
+| *Why* is it like this? | `gbrain search "<question>"` - semantic, over decisions and incidents |
+| *Where* does this live, what touches it? | `graphify explain` - structural, over code |
+| Is it already known-broken? | `engineering/known-issues.md` |
+
+gbrain is a view over the same git-backed markdown, rebuilt on every commit. It
+is never written to by hand - see [0009](decisions/0009-gbrain-indexes-the-brain.md).
+
+Semantic search is currently keyword/FTS only: gbrain was initialised without an
+embedding key. It already beats grep; it is not yet true semantic similarity.
+
 ## The graph
 
 ```

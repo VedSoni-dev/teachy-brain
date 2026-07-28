@@ -72,6 +72,30 @@ foreach ($repoName in $repoNames) {
     }
 }
 
+# Keep gbrain's corpus current too.
+#
+# gbrain indexes the markdown - decisions, incidents, architecture - and answers
+# semantic questions ("why did we choose X") that a structural graph cannot.
+# It is a VIEW over the same git-backed markdown, exactly like the graph, so it
+# rebuilds on the same trigger. An index nobody refreshes answers confidently
+# from a world that stopped existing, which is worse than having no index.
+#
+# Best-effort: gbrain is optional. A machine without it still gets the graph.
+if (Get-Command gbrain -ErrorAction SilentlyContinue) {
+    foreach ($repoName in $repoNames) {
+        $repoPath = Join-Path $workspaceRoot $repoName
+        if (Test-Path $repoPath) {
+            try {
+                gbrain import $repoPath --no-embed 2>&1 | Select-String -Pattern 'pages imported' | Select-Object -Last 1
+            } catch {
+                Write-Warning "gbrain import failed for ${repoName}: $($_.Exception.Message)"
+            }
+        }
+    }
+} else {
+    Write-Host 'gbrain not installed - skipping semantic index.' -ForegroundColor DarkGray
+}
+
 $metadataPath = Join-Path $mergedGraphDirectory 'teachy-graph.meta.json'
 [ordered]@{
     builtAtUtc = (Get-Date).ToUniversalTime().ToString('o')

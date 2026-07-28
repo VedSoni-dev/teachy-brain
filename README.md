@@ -10,6 +10,8 @@ queryable. There is no database, no account, and no service to keep alive — se
 **New machine?** [SETUP.md](SETUP.md) — one command clones all three repos,
 builds, tests, and graphs everything.
 
+**Adding a feature?** [HOW-TO-ADD-A-FEATURE.md](HOW-TO-ADD-A-FEATURE.md) - which layer, which tests, what not to break.
+
 **Start here:** [QUERYING.md](QUERYING.md) — how to actually ask this thing
 questions.
 
@@ -36,6 +38,7 @@ questions.
 | [0006](decisions/0006-git-and-graphify-as-the-company-memory.md) | Git plus graphify is the company memory |
 | [0007](decisions/0007-the-brain-maintains-itself.md) | The brain maintains itself |
 | [0008](decisions/0008-telemetry-is-local-first.md) | Telemetry is local-first, and grades the decisions |
+| [0009](decisions/0009-gbrain-indexes-the-brain.md) | gbrain indexes the brain (reversing part of 0006) |
 
 ## Keeping itself honest
 

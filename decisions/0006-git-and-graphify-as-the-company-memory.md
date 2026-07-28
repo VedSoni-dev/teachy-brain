@@ -30,7 +30,7 @@ query interface, and the value here is agents answering questions without a
 person in the loop. Nothing stops anyone opening this repo *in* Obsidian — it is
 markdown in folders, which is exactly a vault. That option stays free.
 
-**gbrain** — genuinely close, and a real candidate. It was rejected because it
+**gbrain** — genuinely close, and a real candidate. **This rejection was reversed on 2026-07-28; see [0009](0009-gbrain-indexes-the-brain.md).** It was rejected because it
 introduces a second durable store solving a problem git already solves. Two
 stores drift; the one that is easier to write to wins, and the other rots into a
 lie. If a database-backed brain is wanted later, it should be **generated from**
