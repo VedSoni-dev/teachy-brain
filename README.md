@@ -7,6 +7,9 @@ Markdown in git is the source of truth. A generated knowledge graph makes it
 queryable. There is no database, no account, and no service to keep alive — see
 [decision 0006](decisions/0006-git-and-graphify-as-the-company-memory.md).
 
+**New machine?** [SETUP.md](SETUP.md) — one command clones all three repos,
+builds, tests, and graphs everything.
+
 **Start here:** [QUERYING.md](QUERYING.md) — how to actually ask this thing
 questions.
 
