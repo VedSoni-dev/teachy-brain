@@ -84,12 +84,24 @@ foreach ($repoName in $repoNames) {
 if (Get-Command gbrain -ErrorAction SilentlyContinue) {
     foreach ($repoName in $repoNames) {
         $repoPath = Join-Path $workspaceRoot $repoName
-        if (Test-Path $repoPath) {
-            try {
-                gbrain import $repoPath --no-embed 2>&1 | Select-String -Pattern 'pages imported' | Select-Object -Last 1
-            } catch {
-                Write-Warning "gbrain import failed for ${repoName}: $($_.Exception.Message)"
+        if (-not (Test-Path $repoPath)) { continue }
+
+        # $ErrorActionPreference='Stop' turns ANY native stderr output into a
+        # terminating error, and gbrain writes routine routing notices there. The
+        # first version of this reported "import failed" on three successful
+        # imports. Judge the exit code, not the stream.
+        $previousPreference = $ErrorActionPreference
+        $ErrorActionPreference = 'Continue'
+        try {
+            $importOutput = & gbrain import $repoPath --no-embed 2>&1 | Out-String
+            if ($LASTEXITCODE -ne 0) {
+                Write-Warning "gbrain import failed for ${repoName} (exit $LASTEXITCODE)"
+            } else {
+                $importedLine = ($importOutput -split "`n" | Where-Object { $_ -match 'pages imported' } | Select-Object -First 1)
+                if ($importedLine) { Write-Host "  gbrain ${repoName}:$($importedLine.TrimEnd())" }
             }
+        } finally {
+            $ErrorActionPreference = $previousPreference
         }
     }
 } else {
