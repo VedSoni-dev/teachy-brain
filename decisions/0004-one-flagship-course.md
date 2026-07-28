@@ -70,6 +70,10 @@ The flagship has real completion data. A course nobody finishes is not a focus
 problem, and a course people finish and share is the argument for building the
 second one.
 
+Completion, per-goal drop-off, and how often a "failure" was really our vision
+check falling over are now counted — run `telemetry-report.ps1`
+([0008](0008-telemetry-is-local-first.md)).
+
 ## See also
 
 - `teachy-app/desktop/src/data/courseCatalog.ts`

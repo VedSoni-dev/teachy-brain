@@ -57,9 +57,11 @@ loop for nothing — and they will blame Teachy, correctly, for the wasted trip.
 
 ## What it costs us
 
-Five screens is five places to lose someone, and we have no idea which one leaks
-— there is no instrumentation on this flow at all, so every claim about it being
-better is currently an argument, not a measurement.
+Five screens is five places to lose someone. This flow is now instrumented
+([0008](0008-telemetry-is-local-first.md)) — `telemetry-report.ps1` shows per-step
+timing, where people quit, and which validation outcomes fire — but instrumented
+is not the same as answered: until there is real usage, the claim that this beats
+a bare settings field is still an argument, not a measurement.
 
 It also couples Teachy to OpenRouter's UI. When they rename a button or move the
 keys page, our instructions are confidently wrong, and nothing in our test suite

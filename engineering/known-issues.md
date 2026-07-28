@@ -54,6 +54,21 @@ ways out.
 squirrel, so the vulnerable path is unused. Dev-only surface — it is packaging,
 never shipped code.
 
+### Quitting mid-setup is derived, not measured — P2
+
+Killing the app during key setup fires no abandonment event: the React unmount
+handler never runs on a hard quit. Verified by doing it. The report derives quits
+as shown minus completed minus dismissed, which is honest but coarse — it cannot
+say which step a quitter was on, only the furthest step of the most recent
+attempt. A main-process `before-quit` handler that records the last known setup
+step would fix it. See [0008](../decisions/0008-telemetry-is-local-first.md).
+
+### Nothing surfaces telemetry automatically — P2
+
+`telemetry-report.ps1` has to be run by hand. It is not in `brain-status.ps1` and
+no hook prints it, so the brain will hold an ungraded claim indefinitely while
+the answer sits in a log file nobody opened.
+
 ### Cross-repo course URLs go stale silently — P2
 
 `teachy-web`'s `registry.json` installs courses from the app repo by raw URL. If

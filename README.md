@@ -35,6 +35,7 @@ questions.
 | [0005](decisions/0005-three-repos.md) | Three repos: app, web, brain |
 | [0006](decisions/0006-git-and-graphify-as-the-company-memory.md) | Git plus graphify is the company memory |
 | [0007](decisions/0007-the-brain-maintains-itself.md) | The brain maintains itself |
+| [0008](decisions/0008-telemetry-is-local-first.md) | Telemetry is local-first, and grades the decisions |
 
 ## Keeping itself honest
 
@@ -47,6 +48,7 @@ Nobody maintains this by hand:
 | `scripts/brain-status.ps1` | one exit code: graph freshness, unfilled records, drifted index, code shipping while the brain stays still |
 | `scripts/graph-status.ps1` | is the graph built from the current HEADs? |
 | `scripts/new-decision.ps1` | scaffolds a record with the right shape and number |
+| `scripts/telemetry-report.ps1` | grades decisions 0001/0002/0004 against what actually happened |
 
 Agents are told to write back in every repo's `CLAUDE.md`. The protocol —
 including when *not* to record — is [WRITE-BACK.md](WRITE-BACK.md).
