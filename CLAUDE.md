@@ -42,3 +42,19 @@ Never hand-edit `graphify-out/` or `../graph/`. Both are generated and gitignore
 Engineering documentation about how code works lives with that code, in
 teachy-app. The split is: *why we are building this* here, *how this code works*
 there. See [decision 0005](decisions/0005-three-repos.md).
+
+## Write back what you learn - this is not optional
+
+Before finishing a session in which you made an architectural choice, found
+something surprising, or implemented a call the user made in conversation:
+
+```bash
+pwsh scripts/new-decision.ps1 "<the call, as a short sentence>"
+```
+
+A decision made in chat and implemented in code leaves no record of the reasoning
+anywhere - the code shows what, the commit shows what changed, and the why dies
+when the session ends. That is the single way this system fails.
+
+Full protocol, including when NOT to record: `WRITE-BACK.md`.
+Check yourself with `pwsh scripts/brain-status.ps1`.

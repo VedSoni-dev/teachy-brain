@@ -1,0 +1,32 @@
+#!/bin/sh
+#
+# Reports brain health before a push. Shared by all three repos via
+# core.hooksPath.
+#
+# It WARNS. It does not block.
+#
+# A hook that blocks a push over documentation gets bypassed with --no-verify
+# within a week, and after that it is worse than nothing: it still looks like a
+# safety net while catching nothing. A warning at the moment work leaves the
+# machine is the highest-attention, lowest-cost place to say "the brain has not
+# heard about this".
+
+set -e
+
+repo_root=$(git rev-parse --show-toplevel)
+workspace_root=$(cd "$repo_root/.." && pwd)
+brain_status_script="$workspace_root/teachy-brain/scripts/brain-status.ps1"
+
+[ -f "$brain_status_script" ] || exit 0
+
+powershell_command=$(command -v pwsh || command -v powershell || true)
+[ -n "$powershell_command" ] || exit 0
+
+if ! "$powershell_command" -NoProfile -ExecutionPolicy Bypass -File "$brain_status_script" 2>/dev/null; then
+    echo ""
+    echo "  ^ The brain is drifting. Pushing anyway - this is a warning, not a gate."
+    echo "    Record a decision:  pwsh teachy-brain/scripts/new-decision.ps1 \"<the call>\""
+    echo ""
+fi
+
+exit 0

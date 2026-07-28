@@ -5,7 +5,7 @@
 .DESCRIPTION
   Silent rot is the failure mode this whole system is most exposed to: a graph
   that answers confidently from a state of the world that stopped being true
-  three weeks ago. Nothing about a stale graph looks broken — it just quietly
+  three weeks ago. Nothing about a stale graph looks broken - it just quietly
   starts lying.
 
   So staleness is a checkable fact, not a vibe. rebuild-graph.ps1 records the

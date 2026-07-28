@@ -55,7 +55,7 @@ Pick one and commit:
 (a) is the smaller change and matches where the code already is. Either way it is
 a Windows-toolchain task, not a text delete.
 
-## A cost that showed up later
+## What it costs us
 
 The sidecar owns every OS capability, so **when it dies, the app is a shell** —
 every command fails with "background service is not running" and the UI keeps

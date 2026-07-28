@@ -8,7 +8,7 @@
   graphify-out/ and run this again. Nothing is lost, because nothing is stored
   here that is not stored in git first. See decisions/0006.
 
-  Run this after any meaningful change — a new decision record, a refactor, a
+  Run this after any meaningful change - a new decision record, a refactor, a
   new incident. It takes about a minute.
 
 .EXAMPLE
@@ -17,7 +17,7 @@
 
 $ErrorActionPreference = 'Stop'
 
-# The workspace root is the parent of teachy-brain — where all three repos live.
+# The workspace root is the parent of teachy-brain - where all three repos live.
 # Nested Join-Path rather than the multi-argument form: Windows PowerShell 5.1
 # only accepts -Path and -ChildPath, and this has to run on a stock Windows box.
 $workspaceRoot = (Resolve-Path (Join-Path (Join-Path $PSScriptRoot '..') '..')).Path
@@ -59,7 +59,7 @@ graphify merge-graphs @graphPaths --out $mergedGraphPath | Select-Object -Last 1
 # Stamp which commit of each repo this graph was built from.
 #
 # Without this, "is the graph current?" can only be guessed from file timestamps,
-# which lie in both directions — a rebuild that changed nothing looks fresh, and
+# which lie in both directions - a rebuild that changed nothing looks fresh, and
 # a clone with fresh mtimes looks current when it was never built at all.
 # Recording the HEAD SHAs makes staleness a fact rather than an inference, and it
 # is what scripts/graph-status.ps1 checks.

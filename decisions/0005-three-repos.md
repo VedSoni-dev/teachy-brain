@@ -40,7 +40,7 @@ repo. That is a real dependency across a repo boundary and it **fails silently**
 if the URL points at a stale repo, the app installs an old course and nothing
 errors. It is written into teachy-web's README so it does not get lost.
 
-## Cost accepted
+## What it costs us
 
 Three repos means three checkouts, three CI setups, and cross-repo changes that
 no longer land in one commit. That is worth it here because the three have

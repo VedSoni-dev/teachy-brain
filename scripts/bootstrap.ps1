@@ -37,7 +37,7 @@ function Write-Step($message) { Write-Host "`n>> $message" -ForegroundColor Cyan
 function Write-Good($message) { Write-Host "   $message" -ForegroundColor Green }
 function Write-Warn($message) { Write-Host "   $message" -ForegroundColor Yellow }
 
-# ── Prerequisites ─────────────────────────────────────────────────────────────
+# -- Prerequisites -------------------------------------------------------------
 # All checked before anything is created, so a missing tool costs one run, not
 # one run per tool.
 
@@ -76,7 +76,7 @@ if ($LASTEXITCODE -ne 0) {
 }
 Write-Good 'gh authenticated'
 
-# ── Workspace ─────────────────────────────────────────────────────────────────
+# -- Workspace -----------------------------------------------------------------
 
 if (-not $Root) {
     $Root = Join-Path (Get-Location).Path 'teachy'
@@ -97,7 +97,16 @@ foreach ($repoName in $RepoNames) {
     }
 }
 
-# ── App dependencies ──────────────────────────────────────────────────────────
+# -- Self-maintenance hooks ----------------------------------------------------
+# core.hooksPath is local config and is not cloned, so a fresh workspace has no
+# hooks until this runs. Without it the graph never rebuilds itself and nothing
+# warns when the brain drifts - the automation would be present in git and
+# inert on disk, which is the worst of both.
+
+Write-Step 'Installing self-maintenance hooks'
+& (Join-Path (Join-Path (Join-Path $Root 'teachy-brain') 'scripts') 'install-hooks.ps1')
+
+# -- App dependencies ----------------------------------------------------------
 
 $desktopPath = Join-Path (Join-Path $Root 'teachy-app') 'desktop'
 
@@ -121,7 +130,7 @@ try {
     Pop-Location
 }
 
-# ── Knowledge graph ───────────────────────────────────────────────────────────
+# -- Knowledge graph -----------------------------------------------------------
 
 if (Get-Command graphify -ErrorAction SilentlyContinue) {
     Write-Step 'Building the company knowledge graph'
@@ -132,7 +141,7 @@ if (Get-Command graphify -ErrorAction SilentlyContinue) {
     Write-Warn 'Then run: pwsh teachy-brain/scripts/rebuild-graph.ps1'
 }
 
-# ── Done ──────────────────────────────────────────────────────────────────────
+# -- Done ----------------------------------------------------------------------
 
 Write-Host ''
 Write-Host 'Teachy workspace ready.' -ForegroundColor Green

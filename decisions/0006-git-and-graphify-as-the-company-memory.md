@@ -53,6 +53,31 @@ this repo, not written to alongside it.
 **Never edit the graph. Never treat it as the source.** If something is true, it
 is written in markdown and committed. The graph is a view.
 
+## What it costs us
+
+Markdown in git has no recall beyond text search and whatever the graph extracts.
+There is no semantic search, no "what did we say about pricing" that finds a
+paragraph phrased three other ways. A hosted memory product would have given us
+that on day one; we chose durability over retrieval quality, and that is a real
+loss, not a technicality.
+
+It also depends on graphify — a single tool, on PATH, that we do not control. If
+it breaks or changes its output format, the query layer goes with it. The
+markdown survives, which is exactly why it is the source, but "queryable" would
+degrade to grep until someone fixed it.
+
+And the honest one: **git does not make anyone write things down**. This decision
+solves storage and retrieval. It does nothing about capture, and capture is the
+part that actually fails. That gap is what the automation around it — hooks,
+brain-status, the write-back protocol — exists to close, and it is closed by
+convention rather than by the storage choice.
+
+## Revisit when
+
+graphify stops being maintained, or retrieval quality becomes the thing blocking
+people — at which point the answer is an embedding index *generated from* this
+repo, not a second place to write.
+
 ## See also
 
 - [QUERYING.md](../QUERYING.md) — how to actually ask this thing questions

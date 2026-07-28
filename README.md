@@ -34,6 +34,22 @@ questions.
 | [0004](decisions/0004-one-flagship-course.md) | One flagship course, not a catalog |
 | [0005](decisions/0005-three-repos.md) | Three repos: app, web, brain |
 | [0006](decisions/0006-git-and-graphify-as-the-company-memory.md) | Git plus graphify is the company memory |
+| [0007](decisions/0007-the-brain-maintains-itself.md) | The brain maintains itself |
+
+## Keeping itself honest
+
+Nobody maintains this by hand:
+
+| Check | What it does |
+|-------|--------------|
+| `hooks/post-commit` | rebuilds the graph, detached, after every commit |
+| `hooks/pre-push` | warns if the brain is drifting as work leaves the machine |
+| `scripts/brain-status.ps1` | one exit code: graph freshness, unfilled records, drifted index, code shipping while the brain stays still |
+| `scripts/graph-status.ps1` | is the graph built from the current HEADs? |
+| `scripts/new-decision.ps1` | scaffolds a record with the right shape and number |
+
+Agents are told to write back in every repo's `CLAUDE.md`. The protocol —
+including when *not* to record — is [WRITE-BACK.md](WRITE-BACK.md).
 
 ## Querying
 

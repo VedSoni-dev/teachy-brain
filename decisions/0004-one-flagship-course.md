@@ -43,16 +43,32 @@ Hosting is Vercel, always `*.vercel.app` first. Never GitHub Pages. Custom
 domains only after the vercel.app link works — the first win must not be blocked
 on DNS.
 
-## The failure mode this created
+## What it costs us
 
-Course data is hand-transcribed from Swift into TypeScript, so cutting the
-catalog on macOS did **not** cut it on Windows. Windows kept listing four courses,
-three of which no longer existed upstream, and coached the abandoned GitHub Pages
-flow. Nothing failed loudly; it just taught the wrong thing.
+One course means one audience. Anyone who does not want a website bounces with
+nothing to switch to, and there is no second thing to recommend when the flagship
+does not land for someone. The catalog was thin, but it was at least a set of
+doors.
+
+It also concentrates all the risk: if "Make a Website" does not convert, there is
+no other data point to learn from, and no way to tell whether the problem is the
+coaching model or that one topic.
+
+And the cut itself shipped a bug. Course data is hand-transcribed from Swift into
+TypeScript, so cutting the catalog on macOS did **not** cut it on Windows. Windows
+kept listing four courses, three of which no longer existed upstream, and coached
+the abandoned GitHub Pages flow. Nothing failed loudly; it just taught the wrong
+thing.
 
 There are now tests asserting that every listed course has goals and that no
 orphan goal sets survive a catalog cut. Content drift is a correctness bug and is
 tested like one.
+
+## Revisit when
+
+The flagship has real completion data. A course nobody finishes is not a focus
+problem, and a course people finish and share is the argument for building the
+second one.
 
 ## See also
 

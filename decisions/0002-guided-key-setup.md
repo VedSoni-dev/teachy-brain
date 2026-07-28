@@ -55,6 +55,26 @@ loop for nothing — and they will blame Teachy, correctly, for the wasted trip.
   unmounted the flow, so they came back holding a key with the panel gone and
   their progress reset.
 
+## What it costs us
+
+Five screens is five places to lose someone, and we have no idea which one leaks
+— there is no instrumentation on this flow at all, so every claim about it being
+better is currently an argument, not a measurement.
+
+It also couples Teachy to OpenRouter's UI. When they rename a button or move the
+keys page, our instructions are confidently wrong, and nothing in our test suite
+notices — the tests cover our validation logic, not their page.
+
+And validating before saving means a first run now depends on OpenRouter being
+reachable. That is the right trade, but it is a trade: a learner on a flaky
+connection who could previously save a key and discover the problem later now
+cannot get past setup at all.
+
+## Revisit when
+
+Instrumentation exists and shows a specific step leaking, or OpenRouter changes
+its signup or keys flow enough that the instructions mislead.
+
 ## See also
 
 - `teachy-app/desktop/src/onboarding/KeySetup.tsx`
