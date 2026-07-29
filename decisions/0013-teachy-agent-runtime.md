@@ -14,7 +14,7 @@ Ask is a **teaching agent runtime**, not a chat turn:
 | Memory | `~/.teachy/mac-agent-state.json` — path, plan, conversation, log |
 | Think | Private `[THINK]` scratchpad before speech (ReAct observe/plan) |
 | Plan | 3–6 step on-the-go plan when stack locks |
-| Hands | `runAgentLoop` tools; Mac via System Events + Accessibility |
+| Hands | **Not for learners** — Teachy shows/points only ([0014](0014-teachy-shows-never-acts.md)) |
 | Heartbeat | 4m idle nudge when mid-path (OpenClaw-style) |
 
 Buzz/OpenClaw teach us: **shared memory + agent identity + tool loop**, not smarter single replies.

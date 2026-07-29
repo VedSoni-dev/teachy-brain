@@ -132,7 +132,7 @@ The strategic bet: **the product is the teaching loop**, not the video library. 
 - **Menu-bar only** (`LSUIElement = true`) — no dock icon, no traditional main window  
 - **Notch-style panel** (boring.notch–inspired) — hover/open for Learn + settings  
 - **Full-screen transparent overlay** — blue companion cursor, speech, pointing animations  
-- **Course lesson HUD** — current goal, coach line, Hint / Do it for me / I did it  
+- **Course lesson HUD** — current goal, coach line, Hint / I did it (Teachy shows; never does it for them — decision 0014)  
 
 ### Outside a course
 

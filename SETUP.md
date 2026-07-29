@@ -52,9 +52,9 @@ scripts/bootstrap.sh on macOS. That creates a teachy/ folder with all three
 repos (teachy-app, teachy-web, teachy-brain), installs dependencies, builds the
 C# sidecar, runs the full test suite, and builds the cross-repo knowledge graph.
 
-The repos are private, so `gh auth login` first if gh is not authenticated.
+The repos are **public** (MIT). `gh auth login` is still useful for clone/push as a collaborator.
 
-When it finishes, read teachy-brain/QUERYING.md and tell me what state the
+When it finishes, read teachy-brain/QUERYING.md and teachy-brain/decisions/0014-teachy-shows-never-acts.md, then tell me what state the
 workspace is in — anything that failed, anything skipped, and what is worth
 doing next according to teachy-brain/engineering/known-issues.md.
 ```
@@ -83,10 +83,10 @@ also how you refresh a workspace that has gone stale.
 | Tool | Why | Install |
 |------|-----|---------|
 | `git` | obviously | comes with Xcode CLT / Git for Windows |
-| `gh`, authenticated | **the repos are private** | `winget install GitHub.cli` / `brew install gh`, then `gh auth login` |
-| `node` | the Windows app and its tests | `winget install OpenJS.NodeJS.LTS` / `brew install node` |
-| `dotnet` 8 | the C# sidecar — required on Windows, optional on macOS | `winget install Microsoft.DotNet.SDK.8` |
-| `graphify` | the knowledge graph — optional, but it is the query layer | `pip install graphify` |
+| `gh` | GitHub CLI (recommended) | `winget install GitHub.cli` / `brew install gh` |
+| `node` | Electron desktop + tests | `winget install OpenJS.NodeJS.LTS` / `brew install node` |
+| `dotnet` 8 | C# sidecar — required on Windows, optional on macOS | `winget install Microsoft.DotNet.SDK.8` |
+| `graphify` / `graphifyy` | knowledge graph — optional | `pip install graphifyy` (CLI still `graphify`) |
 
 The scripts check all of these up front and report every missing one at once,
 rather than dying on the first and making you run it five times.

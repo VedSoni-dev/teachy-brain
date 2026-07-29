@@ -43,6 +43,7 @@ questions.
 | [0011](decisions/0011-mac-ships-electron-react.md) | Mac ships the Electron/React shell too |
 | [0012](decisions/0012-own-am-openclaw-ai-fluency.md) | Own A&M with OpenClaw-grade AI fluency coaching |
 | [0013](decisions/0013-teachy-agent-runtime.md) | Teachy agent runtime — OpenClaw for AI fluency |
+| [0014](decisions/0014-teachy-shows-never-acts.md) | Teachy shows; never does it for them |
 
 ## Keeping itself honest
 
