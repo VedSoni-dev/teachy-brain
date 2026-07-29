@@ -60,7 +60,7 @@ the answer sits in a log file nobody opened.
 | Site download buttons | Cut over to `teachy-releases` DMG |
 | Academy registry / installURL | Cut over to public `teachy-releases` (teachy-app raw URLs 404 — private) |
 | Mac `ClickyAcademyCatalog` defaults | Cut over to `teachy-releases` registry + Vercel site |
-| Live site | Vercel (`teachy-ashy.vercel.app`); gh-pages is legacy |
+| Live site | Vercel `teachy-ashy-two.vercel.app` ← **teachy-web**; old `teachy-ashy.vercel.app` still on VedSoni-dev/teachy |
 | `feature/learner-brain` | Rescued onto `teachy-app` branch `feature/learner-brain` |
 
 **Deleting that repo is not safe and never will be.** End state: frozen-but-serving
