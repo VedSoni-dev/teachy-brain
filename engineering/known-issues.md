@@ -105,24 +105,19 @@ directory. `buildSpawnArgs` is unit-tested for the quoting logic, but nothing ha
 actually spawned an adapter on Windows. Run the Settings card end to end on a
 Windows box before claiming platform parity.
 
-**Swift copy has never been compiled by Xcode — P2.** Xcode is not installed on
-the machine it was written on, only Command Line Tools. The Foundation-only files
-typecheck clean via `swiftc` and were compiled into a working test harness;
-`NotchACPBrainSection.swift` has only been syntax-parsed, because SwiftUI and `DS`
-types need a real project build.
-
 ### teachy-b2b cannot build on its own — P2
 
 It resolves `@teachy/core` through a `file:` link to `../teachy-app/packages/core`,
 so a clone of teachy-b2b alone fails to install. `teachy-app` must be checked out
 as a sibling. See [0017](../decisions/0017-one-engine-two-editions.md).
 
-### A core change can break B2B without touching its repo — P1
+### A core change can break B2B without a teachy-app → B2B CI bridge — P2
 
-That is the intent of the shared engine, and both editions run core's full suite
-locally — but there is no CI running B2B's verify when `teachy-app` changes. Until
-there is, the only thing catching a cross-repo break is whoever remembers to run
-`npm run verify` in teachy-b2b.
+Both editions run core's full suite locally, and teachy-b2b CI now checks out
+public teachy-app as a sibling and runs `npm run verify`. Still missing: a
+workflow **on teachy-app** that, on core changes, also runs B2B verify (needs a
+token that can read the private repo). Until then, merging core without running
+B2B locally can still ship a cross-repo break.
 
 ### B2B course has no teach-back prompts or author tips — P2
 
@@ -134,12 +129,12 @@ an agent for a product being sold.
 
 ### npm `allow-scripts` blocks Electron's postinstall — P2
 
-A fresh `npm install` in either `desktop/` leaves `node_modules/electron/dist`
-empty, because this machine's npm blocks install scripts by default. `npm run
+A fresh `npm install` in teachy-app or teachy-b2b can leave
+`node_modules/electron/dist` empty when npm blocks install scripts. `npm run
 verify` still passes (typecheck, tests and vite build need no Electron binary), so
-the repo looks healthy right up until the app is actually launched and throws
-"Electron failed to install correctly". Run `npm approve-scripts electron` (or
-`node node_modules/electron/install.js`) after installing.
+the repo looks healthy right up until launch throws "Electron failed to install
+correctly". Run `npm approve-scripts electron` after installing — see
+`teachy-app/INTERN.md`.
 
 ## Fixed, kept because the reasoning is worth having
 

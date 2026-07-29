@@ -24,7 +24,8 @@ its own face — playful tutor energy, not glass SaaS.
 We lose the polished aqua/glass familiarity that some visitors associate with
 "premium mac app." Comic ink can look louder on secondary pages if we don't
 keep enterprise calmer. Overlapping CSS passes in `styles.css` make future
-overrides fragile until a cleanup pass.
+overrides fragile until a cleanup pass. BAM/SPLAT stamps add motion that
+reduced-motion users skip (handled) — sighted users may find the chat row busy.
 
 ## When to revisit
 
