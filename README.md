@@ -40,6 +40,7 @@ questions.
 | [0008](decisions/0008-telemetry-is-local-first.md) | Telemetry is local-first, and grades the decisions |
 | [0009](decisions/0009-gbrain-indexes-the-brain.md) | gbrain indexes the brain (reversing part of 0006) |
 | [0010](decisions/0010-public-surfaces-leave-old-repo.md) | Public surfaces leave the old repo; appcast stays |
+| [0011](decisions/0011-mac-ships-electron-react.md) | Mac ships the Electron/React shell too |
 
 ## Keeping itself honest
 
