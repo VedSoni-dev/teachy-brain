@@ -72,10 +72,81 @@ the answer sits in a log file nobody opened.
 points at the wrong repo or branch, the app installs an old course and
 **nothing errors**. See [0005](../decisions/0005-three-repos.md).
 
+### ACP subscription path is unverified against a signed-in account — P1
+
+[0015](../decisions/0015-borrow-a-subscription-over-acp.md) shipped without ever
+seeing a successful answer from a real subscription. This machine has both CLIs
+installed and **logged out**, and signing in on the user's behalf was not an
+option, so the verified surface stops at the auth boundary:
+
+| Verified | How |
+|----------|-----|
+| Login-shell PATH discovery | Found `claude` in `~/.local/bin`, node in `/opt/homebrew/bin` |
+| Status probe distinguishes all four states | Reported `adapterMissing` correctly on this machine |
+| Handshake against the real adapter | `initialize` + capability negotiation, images=true |
+| Logged-out → typed `authenticationRequired` | Real `-32000` from claude-agent-acp 0.63.0 |
+| Streaming, thought-exclusion, permission rejection, mode pinning, cwd containment | Mock ACP agent; 6/6 checks + observed `mode=default permission=reject_always` |
+
+The Electron implementation clears the same bar plus a real test suite:
+`npm run verify` passes with 46 ACP tests (typecheck, 226 tests, build), and a
+Node harness drives the actual `main/acp/*` modules through a mock agent
+(`mode=default permission=reject_always image=true`), a simulated internal
+company agent loaded from a custom harness file, and the real adapter.
+
+**Not verified anywhere:** a real turn returning real text, chunk cadence from a
+live model, behaviour under rate limits or an expired session, and Codex
+end-to-end (only its handshake was exercised). First person with a logged-in CLI
+should hit **Test connection** in Settings.
+
+**Never run on Windows — P1.** Written and tested entirely on a Mac. The
+Windows-only paths are: `%APPDATA%\npm` discovery, the `cmd.exe` wrapper for
+`.cmd` shims, the PowerShell terminal handoff, and the `%LOCALAPPDATA%` scratch
+directory. `buildSpawnArgs` is unit-tested for the quoting logic, but nothing has
+actually spawned an adapter on Windows. Run the Settings card end to end on a
+Windows box before claiming platform parity.
+
+**Swift copy has never been compiled by Xcode — P2.** Xcode is not installed on
+the machine it was written on, only Command Line Tools. The Foundation-only files
+typecheck clean via `swiftc` and were compiled into a working test harness;
+`NotchACPBrainSection.swift` has only been syntax-parsed, because SwiftUI and `DS`
+types need a real project build.
+
+### teachy-b2b cannot build on its own — P2
+
+It resolves `@teachy/core` through a `file:` link to `../teachy-app/packages/core`,
+so a clone of teachy-b2b alone fails to install. `teachy-app` must be checked out
+as a sibling. See [0017](../decisions/0017-one-engine-two-editions.md).
+
+### A core change can break B2B without touching its repo — P1
+
+That is the intent of the shared engine, and both editions run core's full suite
+locally — but there is no CI running B2B's verify when `teachy-app` changes. Until
+there is, the only thing catching a cross-repo break is whoever remembers to run
+`npm run verify` in teachy-b2b.
+
+### B2B course has no teach-back prompts or author tips — P2
+
+`ai-fluency-at-work` migrated to the current goal schema with `teachBackPrompt:
+null` and `tips: []` on all five goals. Schema-valid and the code guards for it,
+so nothing breaks — but the "I'm stuck" hint has no author tips to draw from and
+no goal offers a soft teach-back. Content authoring, deliberately not invented by
+an agent for a product being sold.
+
+### npm `allow-scripts` blocks Electron's postinstall — P2
+
+A fresh `npm install` in either `desktop/` leaves `node_modules/electron/dist`
+empty, because this machine's npm blocks install scripts by default. `npm run
+verify` still passes (typecheck, tests and vite build need no Electron binary), so
+the repo looks healthy right up until the app is actually launched and throws
+"Electron failed to install correctly". Run `npm approve-scripts electron` (or
+`node node_modules/electron/install.js`) after installing.
+
 ## Fixed, kept because the reasoning is worth having
 
 | Was | Why it mattered |
 |-----|-----------------|
+| teachy-b2b/desktop never compiled | Three files imported `GOALS_BY_COURSE_ID` from a module still exporting `COURSE_GOALS_BY_ID`. Invisible until something ran `tsc`; [0016](../decisions/0016-b2b-desktop-had-never-been-built.md) |
+| macOS permission problem looked like a crash | `getSources()` throws `Failed to get sources.` rather than returning an empty list, so the helpful message was written for a case macOS never produces — and Electron's internal wording reached the learner |
 | Model list unverified / possibly invented IDs | Live check 2026-07-28: every curated ID exists on OpenRouter. Guarded by `desktop/src/state/openRouterModels.test.ts` against `/models` |
 | Overlay primary-display only | Electron overlay now covers the virtual-screen union; cursor + point-at convert into that space with per-display scale |
 | Key setup ended with no PTT / consent framing | Done step now lists Ctrl+Alt, mic/screen prompts, and Learn |
