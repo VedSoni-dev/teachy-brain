@@ -42,6 +42,7 @@ questions.
 | [0010](decisions/0010-public-surfaces-leave-old-repo.md) | Public surfaces leave the old repo; appcast stays |
 | [0011](decisions/0011-mac-ships-electron-react.md) | Mac ships the Electron/React shell too |
 | [0012](decisions/0012-own-am-openclaw-ai-fluency.md) | Own A&M with OpenClaw-grade AI fluency coaching |
+| [0013](decisions/0013-teachy-agent-runtime.md) | Teachy agent runtime — OpenClaw for AI fluency |
 
 ## Keeping itself honest
 
