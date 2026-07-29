@@ -1,13 +1,8 @@
 #!/usr/bin/env bash
 # Sets up the whole Teachy workspace on a fresh macOS or Linux machine.
 #
-# Creates a teachy/ folder holding all three repos and builds the knowledge
-# graph. On macOS it also opens the Xcode project path for the Mac app; the
-# Windows app's C# sidecar only builds on Windows, so its tests are skipped
-# unless the .NET SDK happens to be present.
-#
-# Checks every prerequisite up front and reports all of them at once, rather
-# than dying on the first missing tool and making you run it five times.
+# Creates a teachy/ folder with the public repos, installs the Electron engine,
+# runs verify, and builds the knowledge graph when graphify is available.
 #
 # Usage:
 #   ./bootstrap.sh [target-directory]
@@ -39,16 +34,15 @@ check_tool() {
 check_tool git      required "xcode-select --install, or your package manager"
 check_tool gh       required "brew install gh   (then: gh auth login)"
 check_tool node     required "brew install node"
-check_tool dotnet   optional "brew install --cask dotnet-sdk   (only needed to build the Windows sidecar)"
-check_tool graphify optional "pip install graphify"
+check_tool dotnet   optional "brew install --cask dotnet-sdk   (Windows sidecar only)"
+check_tool graphify optional "pip install graphifyy   (CLI is still graphify)"
+check_tool pwsh     optional "brew install --cask powershell   (brain scripts)"
 
 if [ ${#missing_required[@]} -gt 0 ]; then
   echo "Install these first, then re-run: ${missing_required[*]}" >&2
   exit 1
 fi
 
-# The repos are private, so a clone fails without auth. Say so now rather than
-# letting git prompt for credentials three times.
 if ! gh auth status >/dev/null 2>&1; then
   echo "GitHub CLI is not authenticated. Run: gh auth login" >&2
   exit 1
@@ -72,45 +66,79 @@ for repo_name in "${REPO_NAMES[@]}"; do
   fi
 done
 
-step "Installing app dependencies"
-( cd "$WORKSPACE_ROOT/teachy-app/desktop" && npm install )
-good "npm install done"
-
-if command -v dotnet >/dev/null 2>&1; then
-  step "Running the test suite"
-  ( cd "$WORKSPACE_ROOT/teachy-app/desktop" && npm run verify )
-  good "verify passed"
+# Private B2B edition — skip cleanly if the account cannot see it.
+b2b_path="$WORKSPACE_ROOT/teachy-b2b"
+if [ -d "$b2b_path/.git" ]; then
+  good "teachy-b2b already cloned - pulling"
+  git -C "$b2b_path" pull --ff-only || warn "teachy-b2b pull failed"
+elif gh repo view "$GITHUB_OWNER/teachy-b2b" >/dev/null 2>&1; then
+  step "Cloning private teachy-b2b"
+  gh repo clone "$GITHUB_OWNER/teachy-b2b" "$b2b_path"
 else
-  warn "no .NET SDK - skipping the Windows sidecar build and its tests."
-  warn "The renderer tests still run with: cd teachy-app/desktop && npm test"
+  warn "teachy-b2b not visible to this GitHub account — B2C-only workspace (ask Ved for access)"
+fi
+
+step "Installing teachy-app (engine + B2C)"
+(
+  cd "$WORKSPACE_ROOT/teachy-app"
+  npm install
+  if npm approve-scripts --help >/dev/null 2>&1; then
+    npm approve-scripts electron || true
+  fi
+  # npm that blocks postinstall leaves Electron without a binary; verify still passes.
+  if [ ! -e node_modules/electron/dist ] && [ ! -e node_modules/.bin/electron ]; then
+    warn "Electron binary missing — running electron install.js"
+    node node_modules/electron/install.js 2>/dev/null \
+      || (cd apps/b2c && node ../../node_modules/electron/install.js) 2>/dev/null \
+      || warn "Could not install Electron binary; app launch may fail until you fix it"
+  fi
+  npm run verify
+)
+good "teachy-app verify passed"
+
+if [ -d "$b2b_path/.git" ]; then
+  step "Installing teachy-b2b"
+  (
+    cd "$b2b_path"
+    npm install
+    if npm approve-scripts --help >/dev/null 2>&1; then
+      npm approve-scripts electron || true
+    fi
+    npm run verify
+  )
+  good "teachy-b2b verify passed"
+fi
+
+if command -v pwsh >/dev/null 2>&1; then
+  step "Installing brain self-maintenance hooks"
+  pwsh -File "$WORKSPACE_ROOT/teachy-brain/scripts/install-hooks.ps1" || warn "hooks install skipped"
 fi
 
 if command -v graphify >/dev/null 2>&1; then
   step "Building the company knowledge graph"
-  graph_paths=()
-  for repo_name in "${REPO_NAMES[@]}"; do
-    graphify update "$WORKSPACE_ROOT/$repo_name" >/dev/null
-    graph_paths+=("$WORKSPACE_ROOT/$repo_name/graphify-out/graph.json")
-  done
-  mkdir -p "$WORKSPACE_ROOT/graph"
-  graphify merge-graphs "${graph_paths[@]}" --out "$WORKSPACE_ROOT/graph/teachy-graph.json"
+  if command -v pwsh >/dev/null 2>&1; then
+    pwsh -File "$WORKSPACE_ROOT/teachy-brain/scripts/rebuild-graph.ps1" || warn "graph rebuild failed"
+  else
+    warn "pwsh missing — skip graph rebuild (install PowerShell, then: pwsh teachy-brain/scripts/rebuild-graph.ps1)"
+  fi
 else
   warn "graphify not installed - skipping the knowledge graph."
-  warn "Install it with: pip install graphify"
 fi
 
 cat <<EOF
 
-Teachy workspace ready.
+Teachy workspace ready (Electron — no Swift / Xcode).
 
   $WORKSPACE_ROOT
-    teachy-app     macOS + Windows apps, courses, worker
-    teachy-web     the Academy site
-    teachy-brain   decisions, architecture, incidents
-    graph          the cross-repo knowledge graph
+    teachy-app     engine (packages/core) + free edition (apps/b2c)
+    teachy-web     Academy site
+    teachy-brain   decisions / known issues
+    teachy-b2b     private workplace edition (if you have access)
 
-Mac app:          open $WORKSPACE_ROOT/teachy-app/leanring-buddy.xcodeproj
-Windows app:      cd teachy-app/desktop && npm start
-Ask the graph:    graphify explain "MicrophoneRecorder" --graph graph/teachy-graph.json
-Read first:       teachy-brain/QUERYING.md
+Start B2C:        cd teachy-app && npm run start
+Verify B2C:       cd teachy-app && npm run verify
+Start B2B:        cd teachy-b2b && npm run start
+Intern sheet:     teachy-app/INTERN.md
+Dev layout:       teachy-app/DEVELOPMENT.md
+Ask the graph:    graphify explain "openApp" --graph graph/teachy-graph.json
 EOF

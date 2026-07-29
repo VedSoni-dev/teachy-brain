@@ -1,71 +1,68 @@
 # Set up Teachy on a new machine
 
-Three repos, one workspace, one command.
+Electron engine. Mac and Windows. No Swift / Xcode.
 
-## Moving to a new machine that has the OLD combined repo on it
+## Paste into Claude Code (any OS)
 
-Paste this. It clears local clones of the pre-split repo and replaces them with
-the three-repo workspace. It only touches **local disk** — nothing on GitHub.
-
-```
-Set up my Teachy workspace on this machine, replacing the old pre-split repo.
-
-1. Find every local clone of the OLD combined repo — a git repo whose origin is
-   github.com/VedSoni-dev/teachy (exactly that, NOT teachy-app / teachy-web /
-   teachy-brain / teachy-releases). Look under my home directory. Common spots:
-   ~/teachy, ~/clicky, ~/clicky-win, ~/Developer, ~/Documents, ~/code.
-
-2. For each one you find, before deleting anything: check for uncommitted
-   changes and for local branches that are not pushed to its origin. If there is
-   ANY unpushed work, stop and show me — do not delete it.
-
-3. Show me the full list of directories you plan to delete, with their sizes, and
-   wait for me to confirm. Then delete them.
-
-4. Clone the new workspace: gh repo clone VedSoni-dev/teachy-brain, then run
-   bash teachy-brain/scripts/bootstrap.sh — that creates a teachy/ folder with
-   all three repos, installs dependencies, runs the tests, and builds the
-   knowledge graph.
-
-5. Read teachy-brain/QUERYING.md and teachy-brain/CLAUDE.md, then tell me what
-   state the workspace is in and what teachy-brain/engineering/known-issues.md
-   says is worth doing next.
-
-Do NOT delete or modify anything on GitHub. The old VedSoni-dev/teachy repo must
-stay — installed copies of the Mac app still fetch appcast.xml from it for
-auto-updates, and that URL is compiled into binaries already shipped.
-```
-
-The confirmation step in 3 is deliberate: a `find`-based sweep for repos is
-exactly the kind of thing that matches something you forgot you cared about.
-
-## The paste-into-an-agent prompt
-
-Open Claude Code (or any coding agent) in the folder where you want Teachy to
-live, and paste this:
+Open Claude Code in the folder where you want the workspace, and paste:
 
 ```
-Set up my Teachy workspace here.
+Set up my Teachy workspace on this machine (Mac or Windows — detect which).
 
-Clone VedSoni-dev/teachy-brain, then run its scripts/bootstrap.ps1 on Windows or
-scripts/bootstrap.sh on macOS. That creates a teachy/ folder with all three
-repos (teachy-app, teachy-web, teachy-brain), installs dependencies, builds the
-C# sidecar, runs the full test suite, and builds the cross-repo knowledge graph.
+Goal: a sibling checkout layout that can build and run the Electron Teachy apps.
 
-The repos are **public** (MIT). `gh auth login` is still useful for clone/push as a collaborator.
+1. Prerequisites — install anything missing, then continue:
+   - git, gh (authenticated: `gh auth login` if needed), Node 18+
+   - On Windows also: .NET SDK 8 (C# sidecar)
+   - Optional: PowerShell 7 (`pwsh`) for brain scripts; `pip install graphifyy` for the knowledge graph
 
-When it finishes, read teachy-brain/QUERYING.md and teachy-brain/decisions/0014-teachy-shows-never-acts.md, then tell me what state the
-workspace is in — anything that failed, anything skipped, and what is worth
-doing next according to teachy-brain/engineering/known-issues.md.
+2. Clone / refresh via the brain bootstrap (preferred):
+   - If teachy-brain is not here yet: `gh repo clone VedSoni-dev/teachy-brain`
+   - Windows: `pwsh -ExecutionPolicy Bypass -File teachy-brain/scripts/bootstrap.ps1`
+   - macOS/Linux: `bash teachy-brain/scripts/bootstrap.sh`
+   That creates `teachy/` with teachy-app, teachy-web, teachy-brain; clones private
+   teachy-b2b only if this GitHub account can see it; runs `npm install`,
+   `npm approve-scripts electron` when available, and `npm run verify`.
+
+3. If bootstrap is unavailable, do it by hand next to each other:
+   ```
+   teachy/
+     teachy-app/    # public — engine + B2C
+     teachy-web/
+     teachy-brain/
+     teachy-b2b/    # private — skip if no access
+   ```
+   Then:
+   - `cd teachy-app && npm install && npm approve-scripts electron && npm run verify`
+   - If teachy-b2b exists: same three commands there (it file:-links `../teachy-app/packages/core`)
+
+4. Prove it boots (don't claim victory on verify alone):
+   - `cd teachy-app && npm run start` — tray / notch UI
+   - If launch says Electron failed to install: re-run `npm approve-scripts electron`
+     or `node node_modules/electron/install.js`, then start again
+   - Mac smoke alternate: see teachy-app/DEVELOPMENT.md (exit 2 = Screen Recording)
+
+5. Read and report back:
+   - teachy-app/INTERN.md
+   - teachy-app/DEVELOPMENT.md
+   - teachy-brain/decisions/0014-teachy-shows-never-acts.md
+   - teachy-brain/decisions/0017-one-engine-two-editions.md
+   - teachy-brain/engineering/known-issues.md — what is still broken
+
+Hard rules:
+- There is NO Swift app, NO Xcode project, NO `leanring-buddy`, NO `desktop/` app folder.
+- Teachy shows the next move; do not restore "Do it for me" / autonomous learner hands.
+- teachy-b2b is proprietary/private — never push its curriculum into public teachy-app.
+- Do not force-push, do not change git config, do not delete unrelated folders.
 ```
 
-## Or just run it
+## Or run bootstrap yourself
 
 **Windows**
 
 ```powershell
 gh repo clone VedSoni-dev/teachy-brain
-powershell -ExecutionPolicy Bypass -File teachy-brain\scripts\bootstrap.ps1
+pwsh -ExecutionPolicy Bypass -File teachy-brain\scripts\bootstrap.ps1
 ```
 
 **macOS / Linux**
@@ -75,43 +72,38 @@ gh repo clone VedSoni-dev/teachy-brain
 bash teachy-brain/scripts/bootstrap.sh
 ```
 
-Both are re-runnable. On a second run they pull instead of cloning, so this is
-also how you refresh a workspace that has gone stale.
+Re-runnable: second run pulls instead of cloning.
 
 ## What you need first
 
 | Tool | Why | Install |
 |------|-----|---------|
-| `git` | obviously | comes with Xcode CLT / Git for Windows |
-| `gh` | GitHub CLI (recommended) | `winget install GitHub.cli` / `brew install gh` |
-| `node` | Electron desktop + tests | `winget install OpenJS.NodeJS.LTS` / `brew install node` |
-| `dotnet` 8 | C# sidecar — required on Windows, optional on macOS | `winget install Microsoft.DotNet.SDK.8` |
-| `graphify` / `graphifyy` | knowledge graph — optional | `pip install graphifyy` (CLI still `graphify`) |
-
-The scripts check all of these up front and report every missing one at once,
-rather than dying on the first and making you run it five times.
+| `git` | clone | Git for Windows / Xcode CLT |
+| `gh` | clone + private B2B check | `winget install GitHub.cli` / `brew install gh` |
+| `node` 18+ | Electron + tests | `winget install OpenJS.NodeJS.LTS` / `brew install node` |
+| `dotnet` 8 | Windows sidecar | `winget install Microsoft.DotNet.SDK.8` (required on Windows) |
+| `pwsh` | brain scripts | optional on Mac: `brew install --cask powershell` |
+| `graphify` | knowledge graph | optional: `pip install graphifyy` |
 
 ## What you end up with
 
 ```
 teachy/
-  teachy-app/     macOS + Windows apps, courses, connectors, worker
-  teachy-web/     the Academy site
-  teachy-brain/   decisions, architecture, incidents, launch
-  graph/          teachy-graph.json — the cross-repo knowledge graph
+  teachy-app/     packages/core + apps/b2c + windows/ sidecar
+  teachy-web/     Academy site
+  teachy-brain/   decisions, known issues, this SETUP
+  teachy-b2b/     workplace edition (if granted)
+  graph/          teachy-graph.json (when graphify ran)
 ```
 
-Then:
-
 ```bash
-cd teachy-app/desktop && npm start        # run the Windows app
-cd teachy-app/desktop && npm run verify   # build + test everything
-graphify explain "MicrophoneRecorder" --graph graph/teachy-graph.json
+cd teachy-app && npm run start      # free edition
+cd teachy-app && npm run verify
+cd teachy-b2b && npm run start      # if present
 ```
 
 ## The one thing that will bite you
 
-On macOS the C# sidecar does not build — it is Windows-only (UI Automation,
-DPAPI, SAPI). The bootstrap notices and skips it rather than failing, so on a Mac
-you get the renderer tests but not the sidecar tests. The Mac app itself is the
-Xcode project in `teachy-app/`.
+`npm run verify` can pass **without** the Electron binary when npm blocks
+install scripts. The app then dies at launch. Always run
+`npm approve-scripts electron` (see `teachy-app/INTERN.md`).

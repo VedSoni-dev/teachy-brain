@@ -7,13 +7,62 @@ Markdown in git is the source of truth. A generated knowledge graph makes it
 queryable. There is no database, no account, and no service to keep alive — see
 [decision 0006](decisions/0006-git-and-graphify-as-the-company-memory.md).
 
-**New machine?** [SETUP.md](SETUP.md) — one command clones all three repos,
-builds, tests, and graphs everything.
+## New machine / unpaid intern — paste into Claude Code
 
-**Adding a feature?** [HOW-TO-ADD-A-FEATURE.md](HOW-TO-ADD-A-FEATURE.md) - which layer, which tests, what not to break.
+Works on **Windows or Mac**. Open Claude Code in the folder where the workspace
+should live, paste the block below, let it run. Fuller notes: [SETUP.md](SETUP.md).
 
-**Start here:** [QUERYING.md](QUERYING.md) — how to actually ask this thing
-questions.
+```
+Set up my Teachy workspace on this machine (Mac or Windows — detect which).
+
+Goal: a sibling checkout layout that can build and run the Electron Teachy apps.
+
+1. Prerequisites — install anything missing, then continue:
+   - git, gh (authenticated: `gh auth login` if needed), Node 18+
+   - On Windows also: .NET SDK 8 (C# sidecar)
+   - Optional: PowerShell 7 (`pwsh`) for brain scripts; `pip install graphifyy` for the knowledge graph
+
+2. Clone / refresh via the brain bootstrap (preferred):
+   - If teachy-brain is not here yet: `gh repo clone VedSoni-dev/teachy-brain`
+   - Windows: `pwsh -ExecutionPolicy Bypass -File teachy-brain/scripts/bootstrap.ps1`
+   - macOS/Linux: `bash teachy-brain/scripts/bootstrap.sh`
+   That creates `teachy/` with teachy-app, teachy-web, teachy-brain; clones private
+   teachy-b2b only if this GitHub account can see it; runs `npm install`,
+   `npm approve-scripts electron` when available, and `npm run verify`.
+
+3. If bootstrap is unavailable, do it by hand next to each other:
+   teachy/
+     teachy-app/    # public — engine + B2C
+     teachy-web/
+     teachy-brain/
+     teachy-b2b/    # private — skip if no access
+   Then:
+   - `cd teachy-app && npm install && npm approve-scripts electron && npm run verify`
+   - If teachy-b2b exists: same three commands there (it file:-links `../teachy-app/packages/core`)
+
+4. Prove it boots (don't claim victory on verify alone):
+   - `cd teachy-app && npm run start` — tray / notch UI
+   - If launch says Electron failed to install: re-run `npm approve-scripts electron`
+     or `node node_modules/electron/install.js`, then start again
+   - Mac smoke alternate: see teachy-app/DEVELOPMENT.md (exit 2 = Screen Recording)
+
+5. Read and report back:
+   - teachy-app/INTERN.md
+   - teachy-app/DEVELOPMENT.md
+   - teachy-brain/decisions/0014-teachy-shows-never-acts.md
+   - teachy-brain/decisions/0017-one-engine-two-editions.md
+   - teachy-brain/engineering/known-issues.md — what is still broken
+
+Hard rules:
+- There is NO Swift app, NO Xcode project, NO `leanring-buddy`, NO `desktop/` app folder.
+- Teachy shows the next move; do not restore "Do it for me" / autonomous learner hands.
+- teachy-b2b is proprietary/private — never push its curriculum into public teachy-app.
+- Do not force-push, do not change git config, do not delete unrelated folders.
+```
+
+**Adding a feature?** [HOW-TO-ADD-A-FEATURE.md](HOW-TO-ADD-A-FEATURE.md) — which layer, which tests, what not to break.
+
+**Start querying:** [QUERYING.md](QUERYING.md)
 
 ## Layout
 
@@ -89,6 +138,7 @@ this code works* with the code.
 
 | Repo | Holds |
 |------|-------|
-| **teachy-app** | macOS + Windows apps, `courses/`, `connectors/`, the `worker/` proxy |
+| **teachy-app** | Electron engine (`packages/core`) + free B2C (`apps/b2c`) + Windows sidecar — MIT, public |
+| **teachy-b2b** | Workplace edition only — proprietary, private |
 | **teachy-web** | the Academy site and its deploy config |
 | **teachy-brain** (this one) | strategy, decisions, incidents, launch, course design |

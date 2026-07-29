@@ -3,19 +3,16 @@
   Sets up the whole Teachy workspace on a fresh Windows machine.
 
 .DESCRIPTION
-  Creates a teachy/ folder holding all three repos, installs dependencies,
-  builds the C# sidecar, runs the full test suite, and builds the company
-  knowledge graph.
-
-  Checks every prerequisite up front and reports all of them at once, rather
-  than dying on the first missing tool and making you run it five times.
+  Creates a teachy/ folder with the public repos, installs the Electron engine,
+  builds/tests (including the C# sidecar when present), and builds the company
+  knowledge graph when graphify is available.
 
 .PARAMETER Root
   Where to create the workspace. Defaults to a 'teachy' folder beside wherever
   you ran this from.
 
 .PARAMETER SkipVerify
-  Skip the build-and-test pass. Faster, but you won't know the checkout works.
+  Skip the build-and-test pass.
 
 .EXAMPLE
   pwsh teachy-brain/scripts/bootstrap.ps1
@@ -37,10 +34,6 @@ function Write-Step($message) { Write-Host "`n>> $message" -ForegroundColor Cyan
 function Write-Good($message) { Write-Host "   $message" -ForegroundColor Green }
 function Write-Warn($message) { Write-Host "   $message" -ForegroundColor Yellow }
 
-# -- Prerequisites -------------------------------------------------------------
-# All checked before anything is created, so a missing tool costs one run, not
-# one run per tool.
-
 Write-Step 'Checking prerequisites'
 
 $requirements = @(
@@ -48,7 +41,7 @@ $requirements = @(
     @{ Command = 'gh';       Needed = 'required'; Install = 'winget install GitHub.cli   (then: gh auth login)' }
     @{ Command = 'node';     Needed = 'required'; Install = 'winget install OpenJS.NodeJS.LTS' }
     @{ Command = 'dotnet';   Needed = 'required'; Install = 'winget install Microsoft.DotNet.SDK.8' }
-    @{ Command = 'graphify'; Needed = 'optional'; Install = 'pip install graphify' }
+    @{ Command = 'graphify'; Needed = 'optional'; Install = 'pip install graphifyy' }
 )
 
 $missingRequired = @()
@@ -68,15 +61,11 @@ if ($missingRequired.Count -gt 0) {
     throw "Install these first, then re-run: $($missingRequired -join ', ')"
 }
 
-# The repos are private, so a clone fails without auth. Say so now rather than
-# letting git prompt for credentials three times.
 $ghAuthOutput = (gh auth status 2>&1 | Out-String)
 if ($LASTEXITCODE -ne 0) {
     throw "GitHub CLI is not authenticated. Run: gh auth login"
 }
 Write-Good 'gh authenticated'
-
-# -- Workspace -----------------------------------------------------------------
 
 if (-not $Root) {
     $Root = Join-Path (Get-Location).Path 'teachy'
@@ -97,62 +86,76 @@ foreach ($repoName in $RepoNames) {
     }
 }
 
-# -- Self-maintenance hooks ----------------------------------------------------
-# core.hooksPath is local config and is not cloned, so a fresh workspace has no
-# hooks until this runs. Without it the graph never rebuilds itself and nothing
-# warns when the brain drifts - the automation would be present in git and
-# inert on disk, which is the worst of both.
-
-Write-Step 'Installing self-maintenance hooks'
-& (Join-Path (Join-Path (Join-Path $Root 'teachy-brain') 'scripts') 'install-hooks.ps1')
-
-# -- App dependencies ----------------------------------------------------------
-
-$desktopPath = Join-Path (Join-Path $Root 'teachy-app') 'desktop'
-
-Write-Step 'Installing app dependencies'
-Push-Location $desktopPath
-try {
-    npm install
-    Write-Good 'npm install done'
-
-    if (-not $SkipVerify) {
-        Write-Step 'Building and testing (sidecar + typecheck + tests + renderer)'
-        npm run verify
-        if ($LASTEXITCODE -ne 0) {
-            throw 'npm run verify failed - the checkout is not healthy.'
-        }
-        Write-Good 'verify passed'
+$b2bPath = Join-Path $Root 'teachy-b2b'
+if (Test-Path (Join-Path $b2bPath '.git')) {
+    Write-Good 'teachy-b2b already cloned - pulling'
+    git -C $b2bPath pull --ff-only
+} else {
+    gh repo view "$GitHubOwner/teachy-b2b" 1>$null 2>$null
+    if ($LASTEXITCODE -eq 0) {
+        Write-Step 'Cloning private teachy-b2b'
+        gh repo clone "$GitHubOwner/teachy-b2b" $b2bPath
     } else {
-        Write-Warn 'skipped verify (-SkipVerify)'
+        Write-Warn 'teachy-b2b not visible — B2C-only workspace (ask Ved for access)'
     }
-} finally {
-    Pop-Location
 }
 
-# -- Knowledge graph -----------------------------------------------------------
+Write-Step 'Installing brain self-maintenance hooks'
+& (Join-Path (Join-Path (Join-Path $Root 'teachy-brain') 'scripts') 'install-hooks.ps1')
+
+function Install-TeachyNpmWorkspace([string]$WorkspacePath, [string]$Label) {
+    Write-Step "Installing $Label"
+    Push-Location $WorkspacePath
+    try {
+        npm install
+        npm approve-scripts electron 2>$null
+        if (-not (Test-Path 'node_modules\electron\dist') -and -not (Test-Path 'node_modules\.bin\electron.cmd')) {
+            Write-Warn 'Electron binary missing — running electron install.js'
+            if (Test-Path 'node_modules\electron\install.js') {
+                node node_modules\electron\install.js
+            }
+        }
+        if (-not $SkipVerify) {
+            Write-Step "Verifying $Label"
+            npm run verify
+            if ($LASTEXITCODE -ne 0) {
+                throw "npm run verify failed in $Label"
+            }
+            Write-Good "$Label verify passed"
+        } else {
+            Write-Warn "skipped verify for $Label (-SkipVerify)"
+        }
+    } finally {
+        Pop-Location
+    }
+}
+
+Install-TeachyNpmWorkspace (Join-Path $Root 'teachy-app') 'teachy-app (engine + B2C)'
+
+if (Test-Path (Join-Path $b2bPath '.git')) {
+    Install-TeachyNpmWorkspace $b2bPath 'teachy-b2b'
+}
 
 if (Get-Command graphify -ErrorAction SilentlyContinue) {
     Write-Step 'Building the company knowledge graph'
     & (Join-Path (Join-Path (Join-Path $Root 'teachy-brain') 'scripts') 'rebuild-graph.ps1')
 } else {
     Write-Warn 'graphify not installed - skipping the knowledge graph.'
-    Write-Warn 'Install it with: pip install graphify'
-    Write-Warn 'Then run: pwsh teachy-brain/scripts/rebuild-graph.ps1'
+    Write-Warn 'Install it with: pip install graphifyy'
 }
 
-# -- Done ----------------------------------------------------------------------
-
 Write-Host ''
-Write-Host 'Teachy workspace ready.' -ForegroundColor Green
+Write-Host 'Teachy workspace ready (Electron — no Swift / Xcode).' -ForegroundColor Green
 Write-Host ''
 Write-Host "  $Root"
-Write-Host '    teachy-app     macOS + Windows apps, courses, worker'
-Write-Host '    teachy-web     the Academy site'
-Write-Host '    teachy-brain   decisions, architecture, incidents'
-Write-Host '    graph          the cross-repo knowledge graph'
+Write-Host '    teachy-app     engine (packages/core) + free edition (apps/b2c)'
+Write-Host '    teachy-web     Academy site'
+Write-Host '    teachy-brain   decisions / known issues'
+Write-Host '    teachy-b2b     private workplace edition (if you have access)'
 Write-Host ''
-Write-Host 'Run the app:      cd teachy-app\desktop; npm start'
-Write-Host 'Test everything:  cd teachy-app\desktop; npm run verify'
-Write-Host 'Ask the graph:    graphify explain "MicrophoneRecorder" --graph graph\teachy-graph.json'
-Write-Host 'Read first:       teachy-brain\QUERYING.md'
+Write-Host 'Start B2C:        cd teachy-app; npm run start'
+Write-Host 'Verify B2C:       cd teachy-app; npm run verify'
+Write-Host 'Start B2B:        cd teachy-b2b; npm run start'
+Write-Host 'Intern sheet:     teachy-app\INTERN.md'
+Write-Host 'Dev layout:       teachy-app\DEVELOPMENT.md'
+Write-Host 'Ask the graph:    graphify explain "openApp" --graph graph\teachy-graph.json'
