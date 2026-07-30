@@ -1,19 +1,31 @@
 # Known issues
 
 Open, honest, and ranked by what actually costs a learner something. Updated
-2026-07-28 (post workspace split + known-issues slice).
+2026-07-30 (teaching-engine gap re-scoped from a Windows parity issue to a
+product-wide one).
 
 ## Open
 
-### Windows learner model is only a first slice — P1, large
+### The teaching engine does not exist on either platform — P1, large
 
-The sidecar now persists `skillNodes` + `portfolio` alongside course progress
-(`windows-learner.json`, `get-learner-model`), and Skills/Portfolio prefer those
-records. That is the unblock named below — not TeachyEngine parity.
+Previously filed as *"Windows learner model is only a first slice"*, which is no
+longer the right frame. [0018](../decisions/0018-b2b-proprietary-publish-wipe-swift.md)
+wiped Swift, and the Swift `TeachyEngine/` modules were **never ported** to
+`packages/core`. So this is not a Windows gap — it is the product gap, on Mac too.
 
-Still missing on Windows: spaced repetition, teach-back scoring, autonomy
-transfer, temporal continuity / streak, and real per-skill evidence (nodes are
-still leveled from goal counts until teach-backs write richer events).
+Missing everywhere: teach-back **scoring** (`useCourseSession.ts:426` asks the
+question and discards the answer), evidence-gated skill levels (`SkillLevel` is
+declared at `learnerBrain.ts:38`; nothing promotes through it), skill graph and
+transfer, autonomy transfer, spaced repetition, portfolio artifact capture.
+Skills and Portfolio are still leveled from goal counts.
+
+What Windows *does* now have: the sidecar persists `skillNodes` + `portfolio`
+alongside course progress (`windows-learner.json`, `get-learner-model`), and the
+Skills/Portfolio surfaces prefer those records.
+
+Cost to a learner: completion means "vision saw it happen", never "you can do it
+again next week". Roadmap and order: [0024](../decisions/0024-the-teaching-engine-is-the-roadmap.md)
+and [`../product/teaching-engine.md`](../product/teaching-engine.md).
 
 ### No full Windows onboarding choreography — P1
 

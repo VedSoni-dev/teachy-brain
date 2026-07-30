@@ -71,7 +71,7 @@ Hard rules:
 | `decisions/` | numbered decision records — the question, the call, why, **what it cost us**, when to revisit |
 | `engineering/` | architecture, known issues, and incident write-ups |
 | `company/` | what the product is, who it's for, the enterprise story |
-| `product/` | how a Teachy course is designed, with examples and reference |
+| `product/` | how a Teachy course is designed, plus the teaching-engine build order |
 | `launch/` | launch copy, video brief, demo shot list, changelog |
 | `scripts/` | `rebuild-graph.ps1` |
 
@@ -98,6 +98,11 @@ Hard rules:
 | [0017](decisions/0017-one-engine-two-editions.md) | One engine, two editions (B2C OSS / B2B closed) |
 | [0018](decisions/0018-b2b-proprietary-publish-wipe-swift.md) | B2B proprietary; publish Electron; wipe Swift |
 | [0019](decisions/0019-comic-visual-language-on-teachy-web.md) | Comic visual language on teachy-web |
+| [0020](decisions/0020-learner-brain-and-build-rules.md) | Learner brain and build rules |
+| [0021](decisions/0021-one-brain-the-learner-can-correct.md) | One brain the learner can correct |
+| [0022](decisions/0022-soul-as-an-openclaw-workspace.md) | The soul is an OpenClaw-style workspace |
+| [0023](decisions/0023-teachy-owns-no-window-model.md) | Teachy owns no window model — no tabs, four-tab Studio budget |
+| [0024](decisions/0024-the-teaching-engine-is-the-roadmap.md) | The coaching loop is built; the teaching engine is the roadmap |
 
 ## Keeping itself honest
 
