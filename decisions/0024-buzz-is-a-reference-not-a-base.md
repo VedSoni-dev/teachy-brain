@@ -1,7 +1,7 @@
 # 0024 — Buzz is a reference, not a base
 
 **Date:** 2026-07-30
-**Status:** accepted
+**Status:** superseded by [0025](0025-we-shape-buzz.md), same day
 **Affects:** the engine rebuild (0023), repo layout
 
 ## The question
