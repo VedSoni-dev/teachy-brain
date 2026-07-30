@@ -26,9 +26,13 @@ Open for the rebuild: the stack itself. 0011 (Electron + React) and 0003
 ## Safety net
 
 - Tarballs (working tree + `.git`, no node_modules) in `teachy/wiped-2026-07-30/`.
-- GitHub remotes untouched and still hold full history.
-- teachy-app's final commit `b95c0a5` (the 0022 soul workspace) was never pushed —
-  it exists only in the tarball, as does an uncommitted studio/dock refactor.
+- The GitHub remotes were **deleted too**, same day, on Ved's explicit
+  confirmation. The tarballs are the only surviving copy of the engine —
+  including final commit `b95c0a5` (the 0022 soul workspace, never pushed) and
+  an uncommitted studio/dock refactor. Losing `wiped-2026-07-30/` loses the
+  engine's entire history.
+- Old `VedSoni-dev/teachy` (Swift era, private) and `teachy-releases` (Sparkle
+  feed) remain on GitHub — never in scope.
 
 ## What it costs us
 
