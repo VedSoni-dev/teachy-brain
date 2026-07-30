@@ -1,6 +1,6 @@
 <#
 .SYNOPSIS
-  Rebuilds the Teachy company knowledge graph across all three repos.
+  Rebuilds the Teachy company knowledge graph across every repo in the workspace.
 
 .DESCRIPTION
   The graph is a VIEW, never a source. Everything it knows comes from markdown
@@ -17,11 +17,16 @@
 
 $ErrorActionPreference = 'Stop'
 
-# The workspace root is the parent of teachy-brain - where all three repos live.
+# The workspace root is the parent of teachy-brain - where the repos live.
 # Nested Join-Path rather than the multi-argument form: Windows PowerShell 5.1
 # only accepts -Path and -ChildPath, and this has to run on a stock Windows box.
 $workspaceRoot = (Resolve-Path (Join-Path (Join-Path $PSScriptRoot '..') '..')).Path
-$repoNames = @('teachy-app', 'teachy-web', 'teachy-brain')
+
+# teachy-b2b is included but optional - the loop below skips repos that are not
+# checked out, so a B2C-only workspace still gets a graph. The merged graph is
+# gitignored and never leaves the machine, so indexing the proprietary edition
+# here does not publish it. See decisions/0018.
+$repoNames = @('teachy-app', 'teachy-b2b', 'teachy-web', 'teachy-brain')
 $mergedGraphDirectory = Join-Path $workspaceRoot 'graph'
 $mergedGraphPath = Join-Path $mergedGraphDirectory 'teachy-graph.json'
 

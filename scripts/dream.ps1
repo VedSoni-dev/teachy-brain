@@ -55,7 +55,7 @@ if (Test-Path $lastDreamMarker) {
 }
 Emit ''
 
-foreach ($repoName in @('teachy-app', 'teachy-web', 'teachy-brain')) {
+foreach ($repoName in @('teachy-app', 'teachy-b2b', 'teachy-web', 'teachy-brain')) {
     $repoPath = Join-Path $workspaceRoot $repoName
     if (-not (Test-Path $repoPath)) { continue }
 

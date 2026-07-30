@@ -99,12 +99,26 @@ live model, behaviour under rate limits or an expired session, and Codex
 end-to-end (only its handshake was exercised). First person with a logged-in CLI
 should hit **Test connection** in Settings.
 
-**Never run on Windows — P1.** Written and tested entirely on a Mac. The
-Windows-only paths are: `%APPDATA%\npm` discovery, the `cmd.exe` wrapper for
-`.cmd` shims, the PowerShell terminal handoff, and the `%LOCALAPPDATA%` scratch
-directory. `buildSpawnArgs` is unit-tested for the quoting logic, but nothing has
-actually spawned an adapter on Windows. Run the Settings card end to end on a
-Windows box before claiming platform parity.
+**Windows: now run, and it was broken — 2026-07-29.** The first real Windows run
+found that the adapter could never install at all: `cmd /s` stripped the quote
+off `C:\Program Files\nodejs\npm.cmd` and the learner got `'C:\Program' is not
+recognized`. Full write-up:
+[the quoting incident](incidents/2026-07-29-acp-adapter-install-quoting.md).
+
+Verified on Windows since the fix, driving the app's own `locator.cjs` and
+`connection.cjs` against a live Claude Max session:
+
+| Verified on Windows | Result |
+|---|---|
+| Adapter install via the Settings button | `@agentclientprotocol/claude-agent-acp@0.63.0` installed |
+| `.cmd` shim discovery and spawn | `C:\Users\vedan\.npm-global\claude-agent-acp.cmd` |
+| Handshake | `protocolVersion 1`, `image:true`, `embeddedContext:true` |
+| `session/new` + a real prompt | streamed chunks, `stopReason: end_turn` |
+
+**Still unverified on Windows:** the PowerShell terminal handoff for vendor-CLI
+install, the in-app sign-in card (this box was already logged in, so the OAuth
+paste-the-code path never rendered), the `%LOCALAPPDATA%` scratch directory,
+behaviour under rate limits or an expired session, and Codex end to end.
 
 ### teachy-b2b cannot build on its own — P2
 
@@ -141,6 +155,8 @@ correctly". Run `npm approve-scripts electron` after installing — see
 
 | Was | Why it mattered |
 |-----|-----------------|
+| ACP adapter could never install on Windows | A green suite and a passing test literally named "quotes the path so spaces survive" — the bug was in cmd.exe's parser, not our array, and no assertion about our own data could reach it. [Incident](incidents/2026-07-29-acp-adapter-install-quoting.md) |
+| Monorepo split left three Windows paths one level short | `sidecar.cjs` and `sidecarProtocol.test.ts` still resolved `windows/` from the old `desktop/` depth; `startElectron.mjs` launched the npm workspace root instead of the edition that owns `main.cjs`; vitest globs were built with `path.join`, so backslashes matched nothing and `npm run verify` exited 1 with "No test files found" on Windows while passing on macOS |
 | teachy-b2b/desktop never compiled | Three files imported `GOALS_BY_COURSE_ID` from a module still exporting `COURSE_GOALS_BY_ID`. Invisible until something ran `tsc`; [0016](../decisions/0016-b2b-desktop-had-never-been-built.md) |
 | macOS permission problem looked like a crash | `getSources()` throws `Failed to get sources.` rather than returning an empty list, so the helpful message was written for a case macOS never produces — and Electron's internal wording reached the learner |
 | Model list unverified / possibly invented IDs | Live check 2026-07-28: every curated ID exists on OpenRouter. Guarded by `desktop/src/state/openRouterModels.test.ts` against `/models` |
