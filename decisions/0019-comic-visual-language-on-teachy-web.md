@@ -1,4 +1,4 @@
-# 0017 — Comic visual language on teachy-web (not HeyClicky glass)
+# 0019 — Comic visual language on teachy-web (not HeyClicky glass)
 
 **Date:** 2026-07-29
 **Status:** accepted

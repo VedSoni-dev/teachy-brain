@@ -88,8 +88,9 @@ option, so the verified surface stops at the auth boundary:
 | Streaming, thought-exclusion, permission rejection, mode pinning, cwd containment | Mock ACP agent; 6/6 checks + observed `mode=default permission=reject_always` |
 
 The Electron implementation clears the same bar plus a real test suite:
-`npm run verify` passes with 46 ACP tests (typecheck, 226 tests, build), and a
-Node harness drives the actual `main/acp/*` modules through a mock agent
+`npm run verify` passes (typecheck, 161 tests across 16 files for the engine, plus
+each edition's own), and a Node harness drives the actual `main/acp/*` modules
+through a mock agent
 (`mode=default permission=reject_always image=true`), a simulated internal
 company agent loaded from a custom harness file, and the real adapter.
 

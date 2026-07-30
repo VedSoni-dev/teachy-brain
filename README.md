@@ -95,9 +95,9 @@ Hard rules:
 | [0014](decisions/0014-teachy-shows-never-acts.md) | Teachy shows; never does it for them |
 | [0015](decisions/0015-borrow-a-subscription-over-acp.md) | Borrow a Claude Pro / ChatGPT subscription over ACP |
 | [0016](decisions/0016-b2b-desktop-had-never-been-built.md) | B2B desktop had never been built |
-| [0017](decisions/0017-comic-visual-language-on-teachy-web.md) | Comic visual language on teachy-web |
 | [0017](decisions/0017-one-engine-two-editions.md) | One engine, two editions (B2C OSS / B2B closed) |
 | [0018](decisions/0018-b2b-proprietary-publish-wipe-swift.md) | B2B proprietary; publish Electron; wipe Swift |
+| [0019](decisions/0019-comic-visual-language-on-teachy-web.md) | Comic visual language on teachy-web |
 
 ## Keeping itself honest
 
