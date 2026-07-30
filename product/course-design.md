@@ -13,7 +13,7 @@ description: >-
 
 Ship **one legendary path** at a time. Not a catalog of weak tutorials.
 
-**Reference course:** Make a Website (`docs/design/2026-07-24-make-a-website.md`, `courses/build-a-website.json`, `ClickyCourseCatalog.buildAWebsiteCourse`).
+**Reference course:** Make a Website (`docs/design/2026-07-24-make-a-website.md`, `courses/build-a-website.json`, bundled catalog in teachy-app `packages/core/src/data/courseCatalog.ts`).
 
 **Deeper templates:** [reference.md](reference.md) · **Worked example:** [examples.md](examples.md)
 
@@ -21,7 +21,7 @@ Ship **one legendary path** at a time. Not a catalog of weak tutorials.
 
 1. **Design before code.** Decision tree + design doc first. No goal JSON until the tree feels right.
 2. **Shared trophy.** Every fork ends at the same real outcome (a URL, a shipped artifact, a verified skill on screen).
-3. **Teachy is the active prompter.** Normies type vague asks. Teachy interviews → writes the perfect prompt → opens the tool → pastes. They learn prompting by *feeling* a good prompt work.
+3. **Teachy is the active prompter.** Normies type vague asks. Teachy interviews → writes the perfect prompt with them → opens the tool. The learner pastes and sends it — their hands, per [decision 0014](../decisions/0014-teachy-shows-never-acts.md). They learn prompting by *feeling* a good prompt work.
 4. **Doing > navigating.** Teachy opens ChatGPT / Replit / Vercel / docs. Learner decides and reacts — never hunts tabs.
 5. **Multiple on-ramps, one path.** Fork on what they already have + what they live in + what to help next — not separate courses per persona.
 6. **Stable goal IDs** once shipped. Progress keys off ids.
@@ -36,7 +36,7 @@ Course design progress:
 - [ ] 4. Decision tree: HAVE → LIVE IN → NEXT HELP → trophy
 - [ ] 5. Tool routing (if agents/vibecoding involved)
 - [ ] 6. Design doc in docs/design/YYYY-MM-DD-<slug>.md
-- [ ] 7. Implement goals (Swift catalog + courses/*.json)
+- [ ] 7. Implement goals (core catalog + courses/*.json)
 - [ ] 8. Conversational vs vision goals (advanceOnUserConfirm)
 - [ ] 9. Dogfood Phase 0–1 cold before polishing later goals
 ```
@@ -103,13 +103,13 @@ For each goal set:
 |-------|------|
 | `coachAsk` | What the learner would ask Teachy |
 | `doneWhen` | Visible on screen OR `advanceOnUserConfirm: true` |
-| `toolPolicy` | `canDoForThem` when Teachy must open/paste; tighten later |
+| `toolPolicy` | Open-only: Teachy may open the tool/URL. It never types or pastes in the learner's work ([0014](../decisions/0014-teachy-shows-never-acts.md)) |
 | `tips` | Include "OPEN https://… for them" |
 | `teachingContext` | concepts, mistakes, successExamples, skipTeachBack |
 
 **Ship in both places:**
 
-- Bundled: `ClickyCourseCatalog` in `leanring-buddy/ClickyCourse.swift`
+- Bundled: `courseCatalog.ts` in teachy-app `packages/core/src/data/`
 - Open curriculum: `courses/<id>.json`
 - Registry card: `academy/registry.json` if featured
 
@@ -118,7 +118,7 @@ For each goal set:
 | Goal type | Pattern |
 |-----------|---------|
 | Interview / path choice | `advanceOnUserConfirm: true`, skipTeachBack, no vision gate |
-| Interview → open tool → paste | **One goal.** After enough answers, open+paste in the **same turn**. Never wait for "next step" to open a link. |
+| Interview → open tool → learner pastes | **One goal.** After enough answers, open the tool in the **same turn**, prompt ready for them to paste. Never wait for "next step" to open a link. |
 | Screen proof (preview, deploy) | Real `doneWhen`; vision verify OK |
 
 **Known bug class:** typed "next step" must route like voice (`LessonPlayer.handleTextQuestion`). Soft-pass must not skip a required open-tool beat.
@@ -131,7 +131,7 @@ Run Phase 0–1 out loud on a real human (or yourself cold) before polishing lat
 
 - Warm, one beat at a time, point at real UI
 - `[INFO]` + `[TODO]` when coaching
-- Open URLs with tools; paste prompts; don't lecture "how to prompt"
+- Open URLs with tools; hand them the prompt to paste; don't lecture "how to prompt"
 - Remember intake (build tool, paid AI, what they have) for the whole session
 
 ## Anti-patterns
