@@ -16,7 +16,7 @@ deeplink from the Academy. Primary CTA is join waitlist: name, email, and
 whether they’re personal (“just me”) or company (“my company would love this”).
 
 **No new database.** Submissions go through FormSubmit AJAX to
-`enterprise@teachy.app`. Typeform would also work; we skipped it so the form
+`ved.06.soni@gmail.com`. Typeform would also work; we skipped it so the form
 stays on the comic page instead of bouncing people to a third-party UI.
 
 ## Why
@@ -29,8 +29,8 @@ Auth, or a form SaaS redesign of the landing page.
 
 - Signups live in FormSubmit’s email stream (and their retention rules), not a
   sheet or CRM we own — easy to lose track, harder to segment later.
-- First FormSubmit delivery needs a one-time confirm on `enterprise@teachy.app`;
-  if that inbox is dead, submissions silently fail until we re-point the
+- First FormSubmit delivery needs a one-time confirm on `ved.06.soni@gmail.com`;
+  if that inbox filters it, submissions silently fail until we re-point the
   endpoint.
 - Anyone with an old release URL can still grab a DMG from GitHub Releases; the
   site just stops advertising it.
