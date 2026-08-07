@@ -103,6 +103,9 @@ Hard rules:
 | [0022](decisions/0022-soul-as-an-openclaw-workspace.md) | The soul is an OpenClaw-style workspace |
 | [0023](decisions/0023-teachy-owns-no-window-model.md) | Teachy owns no window model — no tabs, four-tab Studio budget |
 | [0024](decisions/0024-the-teaching-engine-is-the-roadmap.md) | The coaching loop is built; the teaching engine is the roadmap |
+| [0025](decisions/0025-we-shape-buzz.md) | We shape Buzz *(superseded as host by 0026)* |
+| [0026](decisions/0026-teachy-is-a-clicky-skill-pack.md) | Teachy is a Clicky skill pack — scrap the standalone engine |
+| [0027](decisions/0027-site-is-waitlist-not-download.md) | Site is waitlist, not download — FormSubmit, no DB |
 
 ## Keeping itself honest
 
